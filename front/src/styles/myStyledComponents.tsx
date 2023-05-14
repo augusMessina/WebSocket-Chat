@@ -26,7 +26,7 @@ export const MessagesDisplay = styled.div`
     }
 
     &::-webkit-scrollbar {
-        width: 6px;
+        width: 10px;
     }
 
     /* Track */
@@ -42,7 +42,7 @@ export const MessagesDisplay = styled.div`
 
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
-        background: #555;
+        background: #001127;
     } 
 
 `;
