@@ -1,4 +1,4 @@
-import { ErrorMessage, Menu, MessageBubble, MessagesDisplay, NewMessage, UserBubble } from "@/styles/myStyledComponents";
+import { ErrorMessage, Menu, MessageBubble, MessagesDisplay, NewMessage, SendMessageDiv, UserBubble } from "@/styles/myStyledComponents";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 
@@ -96,8 +96,8 @@ const Chat = () => {
     return (
         <>
         <Menu>
-            <h1 style={{color: "white"}}>Messages:</h1>
-            <input placeholder="User.." onChange={(e) => setUser(e.target.value)}></input>
+            <h1>Messages:</h1>
+            <input style={{width: "306px"}} placeholder="User.." onChange={(e) => setUser(e.target.value)}></input>
             
             <MessagesDisplay ref={messagesDisplayRef}>
             {
@@ -111,8 +111,19 @@ const Chat = () => {
                 ))
             }
             </MessagesDisplay>
-            <input value={message} placeholder="Message.." onChange={(e) => setMessage(e.target.value)}></input>
-            <button onClick={sendMessage}>Send</button>
+
+            <SendMessageDiv>
+                <input style={{width: "100%"}} value={message} placeholder="Message.." 
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => {
+                    if(e.key === 'Enter'){
+                        sendMessage();
+                    }
+                }}
+                ></input>
+                <button onClick={sendMessage}>Send</button>
+            </SendMessageDiv>
+
             {
                 showError && <ErrorMessage>You must give an user name and a message text</ErrorMessage>
             }

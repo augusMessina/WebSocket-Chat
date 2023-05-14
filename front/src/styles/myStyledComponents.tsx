@@ -47,6 +47,12 @@ export const UserBubble = styled.p`
     font-weight: 600;
 `;
 
+export const SendMessageDiv = styled.div`
+    display: flex;
+    flex-direction: row;
+    width: 330px;  
+`;
+
 export const ErrorMessage = styled.p`
     width: fit-content;
     color: red;
