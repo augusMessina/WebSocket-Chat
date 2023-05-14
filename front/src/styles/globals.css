@@ -11,6 +11,7 @@ h1{
 p{
     font-family: 'Outfit', sans-serif;
     color: white;
+    font-size: 17px;
 }
 
 input{
@@ -19,6 +20,7 @@ input{
     border: 2px solid black;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
+    font-size: 20px;
 }
 
 button{
@@ -27,6 +29,7 @@ button{
     border: 2px solid black;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
+    font-size: 20px;
     transition: 0.3s;
 }
 

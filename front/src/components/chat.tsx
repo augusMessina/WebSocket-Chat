@@ -97,7 +97,7 @@ const Chat = () => {
         <>
         <Menu>
             <h1>Messages:</h1>
-            <input style={{width: "306px"}} placeholder="User.." onChange={(e) => setUser(e.target.value)}></input>
+            <input style={{width: "350px"}} placeholder="User.." onChange={(e) => setUser(e.target.value)}></input>
             
             <MessagesDisplay ref={messagesDisplayRef}>
             {
