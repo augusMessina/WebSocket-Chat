@@ -1,0 +1,36 @@
+body{
+    background: #222222;
+}
+
+h1{
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    color: white;
+}
+
+p{
+    font-family: 'Outfit', sans-serif;
+    color: white;
+}
+
+input{
+    background: white;
+    padding: 10px;
+    border: 2px solid black;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+}
+
+button{
+    background: white;
+    padding: 10px;
+    border: 2px solid black;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+button:hover{
+    background: #145DA0;
+    color: white;
+}

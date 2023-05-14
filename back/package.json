@@ -1,0 +1,21 @@
+{
+  "name": "practica4_websockets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "start": "ts-node src/main.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.7.1",
+    "@graphql-tools/schema": "^9.0.19",
+    "@types/ws": "^8.5.4",
+    "apollo-server": "^3.12.0",
+    "graphql-subscriptions": "^2.0.0",
+    "graphql-ws": "^5.13.0",
+    "ts-node": "^10.9.1",
+    "ws": "^8.13.0"
+  }
+}
