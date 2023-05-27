@@ -21,7 +21,3 @@ export const typeDefs = gql`
     newMessage: Message
   }
 `;
-
-// type Subscription{
-//     matchUpdated(id: String!): Match!
-//   }

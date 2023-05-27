@@ -96,7 +96,7 @@ const Chat = () => {
     return (
         <>
         <Menu>
-            <h1>Messages:</h1>
+            <h1>Websocket Chat</h1>
             <input style={{width: "350px"}} placeholder="User.." onChange={(e) => setUser(e.target.value)}></input>
             
             <MessagesDisplay ref={messagesDisplayRef}>

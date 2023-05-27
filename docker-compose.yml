@@ -9,7 +9,7 @@ services:
       - ./front:/usr/src
     depends_on:
       - back
-    command: bash -c "cd /usr/src && npm run dev"
+    command: bash -c "cd /usr/src && npm install && npm run dev"
 
   back:
     image: node:18
@@ -17,7 +17,7 @@ services:
       - 4000:4000
     volumes:
       - ./back:/usr/src
-    command: bash -c "cd /usr/src && npm run start"
+    command: bash -c "cd /usr/src && npm install && npm run start"
     # depends_on:
     #   - mongo
   

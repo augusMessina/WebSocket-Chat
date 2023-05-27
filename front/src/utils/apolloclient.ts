@@ -3,13 +3,15 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 
+const yourIP = "your IP";
+
 const httpLink = new HttpLink({
-  uri: "http://192.168.1.48:4000/graphql",
+  uri: `http://${yourIP}:4000/graphql`,
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://192.168.1.48:4000/graphql",
+    url: `ws://${yourIP}:4000/graphql`,
   })
 );
 
