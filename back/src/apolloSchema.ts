@@ -4,6 +4,7 @@ export const typeDefs = gql`
   type Message {
     user: String!
     message: String!
+    id: ID!
   }
 
   type Response {
@@ -16,6 +17,7 @@ export const typeDefs = gql`
   }
   type Mutation {
     addMessage(user: String!, message: String!): Response!
+    clearChat: String!
   }
   type Subscription {
     newMessage: Message

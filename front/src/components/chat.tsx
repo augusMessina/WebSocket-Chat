@@ -53,19 +53,22 @@ const Chat = () => {
 
     const messagesDisplayRef = useRef<HTMLDivElement>(null);
 
+    // solo hace la query 1 vez, y guarda el resultado obtenido
+    // en el estado messageList
     useQuery<QueryResponse>(GET_MESSAGES_QUERY,{
         onCompleted(data) {
             setMessageList(data.getMessages)
         },
     })
 
-    const sub = useSubscription<SubRespone>(NEW_MESSAGE_SUBSCRIPTION,
-        {
+    // useSubscription para recibir mensajes nuevos, cada vez que llegue uno
+    // se añade a messageList
+    const sub = useSubscription<SubRespone>(NEW_MESSAGE_SUBSCRIPTION,{
             onData: (data) => {
                 console.log("message received");
                 setMessageList([...messageList, data.data.data?.newMessage]);
             }
-        });
+    });
 
     const [mutationFuntcion] = useMutation(ADD_MESSAGE_MUTATION);
 
@@ -84,10 +87,12 @@ const Chat = () => {
         setShowError(false);
     }
 
+    // cada vez que messageList varíe (se añade un mensaje) hace
+    // que el scroll baje
     useEffect(() => {
         if(messagesDisplayRef.current)
             messagesDisplayRef.current.scrollTop = messagesDisplayRef.current.scrollHeight;
-      }, [messageList]);
+    }, [messageList]);
 
     if (sub.error) {
         return <p>Error: {sub.error.message}</p>;

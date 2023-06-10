@@ -1,19 +1,22 @@
-// import { InsertOneResult, ObjectId, UpdateResult } from "mongodb";
-import { messages } from "../db/dbconnection";
+import { ObjectId } from "mongodb";
+import { messagesCollection } from "../db/dbconnection";
 import { pubsub } from "../main";
 import { Message } from "../types";
-// import { MatchSchema } from "../db/schema";
-// import { Match } from "../types";
-// import { pubsub } from "../main";
 
 export const Mutation = {
-  addMessage: (
+  addMessage: async (
     _: unknown,
     params: { user: string; message: string }
-  ): { info: string; message: Message } => {
-    const newMessage: Message = { user: params.user, message: params.message };
+  ): Promise<{ info: string; message: Message & { id: string } }> => {
+    const { user, message } = params;
 
-    messages.push(newMessage);
+    const myNewID = new ObjectId();
+
+    await messagesCollection.insertOne({
+      user,
+      message,
+      _id: myNewID,
+    });
 
     pubsub.publish("NEW_MSG", {
       newMessage: { user: params.user, message: params.message },
@@ -21,7 +24,15 @@ export const Mutation = {
 
     return {
       info: "message added",
-      message: newMessage,
+      message: {
+        user,
+        message,
+        id: myNewID.toString(),
+      },
     };
+  },
+  clearChat: async (_: unknown): Promise<string> => {
+    await messagesCollection.deleteMany({});
+    return "All messages cleared.";
   },
 };
