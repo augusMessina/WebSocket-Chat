@@ -1,10 +1,53 @@
 import styled from "styled-components";
 
+export const Title = styled.p`
+    font-size: 60px;
+    font-weight: 600;
+    margin: 17px;
+`;
+
+export const Wrapper = styled.div`
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+`;
+
 export const Menu = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
+`;
+
+export const MenuCentered = styled.div`
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 200px;
+    background: #00000031;
+    backdrop-filter: blur(5px);
+    padding: 30px;
+    border-radius: 15px;
+`;
+
+export const FormFlex = styled.form`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;"
+`;
+
+export const EyeIconLabel = styled.label<{backgroundColor: string}>`
+    height: 40px; 
+    width: 40px;
+    cursor: pointer;
+    background: ${props => props.backgroundColor};
+    border-radius: 50%;
+    text-align: center;
+    transition: 0.2s;
 `;
 
 export const MessagesDisplay = styled.div`
@@ -83,4 +126,22 @@ export const ErrorMessage = styled.p`
     width: fit-content;
     color: red;
     font-weight: 600;
+`;
+
+export const LoginButton = styled.button`
+    width: 100px;
+    border-radius: 10px;
+    background: #8432bb;
+    color: white;
+    &:hover{
+        background: #542074;
+    }
+`;
+
+export const LoginInput = styled.input`
+    transition: 0.2s;
+    border-radius: 10px;
+    &:focus{
+        padding: 12px;
+    }
 `;

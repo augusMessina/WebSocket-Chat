@@ -16,8 +16,11 @@ export const typeDefs = gql`
     getMessages: [Message!]!
   }
   type Mutation {
-    addMessage(user: String!, message: String!): Response!
+    register(username: String!, password: String!): String!
+    login(username: String!, password: String!): String!
+    addMessage(token: String!, message: String!): Response!
     clearChat: String!
+    clearUsers: String!
   }
   type Subscription {
     newMessage: Message
