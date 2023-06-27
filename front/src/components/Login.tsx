@@ -26,7 +26,11 @@ export default function Login () {
                 <LoginContext.Provider value={{mutationFuntcion, loading, error}}>
                     <UserForm></UserForm>
                 </LoginContext.Provider>
-                <p style={{fontWeight: "600"}}>You don't have an account yet? <Link className="link" href={'/'}>Create account</Link></p>
+                <div style={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontWeight: '600'}}>
+                    <p>Don't have an account yet?</p>
+                    <Link className="link" href={'/'}>Create account</Link>
+                </div>
+                
             </MenuCentered>
         </Wrapper>
         </>

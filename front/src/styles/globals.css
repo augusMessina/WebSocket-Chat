@@ -18,7 +18,7 @@ h1{
     color: white;
 }
 
-p{
+p, .link{
     font-family: 'Outfit', sans-serif;
     color: white;
     font-size: 17px;

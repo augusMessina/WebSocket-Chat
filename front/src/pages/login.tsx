@@ -3,7 +3,7 @@ import CredentialsContextProvider from "@/context/CredentialsContext"
 
 
 const LoginPage = () => {
-    return(
+    return (
         <CredentialsContextProvider>
             <Login></Login>
         </CredentialsContextProvider>
