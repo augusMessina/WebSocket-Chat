@@ -1,20 +1,26 @@
 import { createContext, useEffect, useState } from "react";
 
-export const Context = createContext<any>({})
+type JWTContextProviderProps = {
+  children: React.ReactNode;
+}
 
-export default function JWTContextProvider({children}) {
+export const JWTContext = createContext<any>({})
+
+export default function JWTContextProvider(props: JWTContextProviderProps) {
     const [JWT, setJWT] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const storedJWT = window.localStorage.getItem("JWT");
         if (storedJWT) {
           setJWT(storedJWT);
         }
+        setIsLoading(false)
       }, []);
 
     return (
-        <Context.Provider value={{JWT, setJWT}}>
-            {children}
-        </Context.Provider>
+        <JWTContext.Provider value={{JWT, setJWT, isLoading}}>
+            {props.children}
+        </JWTContext.Provider>
     )
 }

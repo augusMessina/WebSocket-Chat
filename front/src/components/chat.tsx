@@ -1,18 +1,21 @@
-import { ErrorMessage, Menu, MessageBubble, MessagesDisplay, NewMessage, SendMessageDiv, UserBubble } from "@/styles/myStyledComponents";
+import useUser from "@/hooks/useUser";
+import { ErrorMessage, LogoutButton, Menu, MessageBubble, MessagesDisplay, NewMessage, SendMessageDiv, UserBubble } from "@/styles/myStyledComponents";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 
 type QueryResponse = {
     getMessages: {
         user: string,
-        message: string
+        message: string,
+        id: string
     }[]
 }
 
 type SubRespone = {
     newMessage:{
         user: string,
-        message: string
+        message: string,
+        id: string
     }
 }
 
@@ -23,6 +26,7 @@ const Chat = () => {
         getMessages {
           user
           message
+          id
         }
       }  
     `;
@@ -32,21 +36,23 @@ const Chat = () => {
         newMessage {
             user
             message
+            id
         }
     }
     `;
 
     const ADD_MESSAGE_MUTATION = gql`
-    mutation AddMessage($user: String!, $message: String!) {
-        addMessage(user: $user, message: $message) {
+    mutation AddMessage($token: String!, $message: String!) {
+        addMessage(token: $token, message: $message) {
           info
         }
       }
     `;
 
-    const [messageList, setMessageList] = useState<({user:string, message: string}|undefined)[]>([]);
+    const {logut, JWT} = useUser()
 
-    const [user, setUser] = useState<string>("");
+    const [messageList, setMessageList] = useState<({user:string, message: string, id: string}|undefined)[]>([]);
+
     const [message, setMessage] = useState<string>("");
 
     const [showError, setShowError] = useState<boolean>(false);
@@ -73,13 +79,9 @@ const Chat = () => {
     const [mutationFuntcion] = useMutation(ADD_MESSAGE_MUTATION);
 
     const sendMessage = async () => {
-        if(user==="" || message===""){
-            setShowError(true);
-            return;
-        }
         await mutationFuntcion({
             variables:{
-                user,
+                token: JWT,
                 message
             }
         });
@@ -100,19 +102,19 @@ const Chat = () => {
 
     return (
         <>
+        
         <Menu>
+            <div style={{width: '100%', display: 'flex', justifyContent: 'end', marginTop: '10px', marginRight: '10px'}}>
+                <LogoutButton onClick={logut}>Logout</LogoutButton>
+            </div>
             <h1>Websocket Chat</h1>
-            <input style={{width: "350px"}} placeholder="User.." onChange={(e) => setUser(e.target.value)}></input>
-            
             <MessagesDisplay ref={messagesDisplayRef}>
             {
                 messageList.map(message => (
-                    <>
-                    <NewMessage>
+                    <NewMessage key={message?.id}>
                         <UserBubble>{message?.user}</UserBubble>
                         <MessageBubble>{message?.message}</MessageBubble>
                     </NewMessage>
-                    </>
                 ))
             }
             </MessagesDisplay>

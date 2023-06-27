@@ -138,6 +138,17 @@ export const LoginButton = styled.button`
     }
 `;
 
+export const LogoutButton = styled.button`
+    width: 100px;
+    border-radius: 10px;
+    background: #03010463;
+    border-width: 0px;
+    color: white;
+    &:hover{
+        background: #0201037f;
+    }
+`;
+
 export const LoginInput = styled.input`
     transition: 0.2s;
     border-radius: 10px;

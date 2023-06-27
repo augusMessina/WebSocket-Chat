@@ -1,14 +1,16 @@
 import useUser from "@/hooks/useUser";
 import { ErrorMessage, EyeIconLabel, FormFlex, LoginButton, LoginInput } from "@/styles/myStyledComponents";
 import { useContext, useState } from "react";
-import { Context } from "@/context/CredentialsContext";
-import { LoginContext } from "./Login";
+import { CredentialsContext } from "@/context/CredentialsContext";
+import { MutationContext } from "@/context/MutationContext";
+import { useRouter } from "next/router";
 
 export default function UserForm () {
+    const router = useRouter();
 
     // get context from login (mutation) and from FormContext (credentials)
-    const {username, password, setUsername, setPassword} = useContext(Context)
-    const {mutationFuntcion, loading, error} = useContext(LoginContext)
+    const {username, password, setUsername, setPassword} = useContext(CredentialsContext)
+    const {mutationFuntcion, loading, error, pageType} = useContext(MutationContext)
 
     // States for icons
     const [eyeClass, setEyeClass] = useState<{class: string, color: string, background: string}>({
@@ -39,7 +41,8 @@ export default function UserForm () {
                 password
             }});
             if (response && response.data) {
-                login(response.data.login);
+                login(response.data.login ?? response.data.register);
+                router.replace('/');
             }
         } catch (e){
             console.log((e as Error).message)
@@ -64,8 +67,31 @@ export default function UserForm () {
                 onChange={(e) => {setPassword(e.target.value)}}></LoginInput>
 
             </div>
-            {error && <ErrorMessage>Wrong username or password</ErrorMessage>}
-            {!loading ? <LoginButton>Log in</LoginButton> : <div className="custom-loader"></div>}
+            
+            { pageType==='LOGIN' && 
+                <>
+                {
+                    <>
+                    {error && <ErrorMessage>Wrong username or password</ErrorMessage>}
+                    {!loading ? <LoginButton>Log in</LoginButton> : <div className="custom-loader"></div>}
+                    </>
+                }
+                </>
+            }
+
+
+            { pageType==='SIGNUP' && 
+                <>
+                {
+                    <>
+                    {error && <ErrorMessage>Username already taken</ErrorMessage>}
+                    {!loading ? <LoginButton>Sign up</LoginButton> : <div className="custom-loader"></div>}
+                    </>
+                }
+                </>
+            }
+            
+            
 
         </FormFlex> 
     )

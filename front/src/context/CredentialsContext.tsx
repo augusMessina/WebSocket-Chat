@@ -1,14 +1,18 @@
 import { createContext, useState } from "react";
 
-export const Context = createContext<any>({})
+type CredentialsContextProviderProps = {
+    children: React.ReactNode;
+  }
 
-export default function CredentialsContextProvider({children}) {
+export const CredentialsContext = createContext<any>({})
+
+export default function CredentialsContextProvider(props: CredentialsContextProviderProps) {
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
 
     return (
-        <Context.Provider value={{username, setUsername, password, setPassword}}>
-            {children}
-        </Context.Provider>
+        <CredentialsContext.Provider value={{username, setUsername, password, setPassword}}>
+            {props.children}
+        </CredentialsContext.Provider>
     )
 }

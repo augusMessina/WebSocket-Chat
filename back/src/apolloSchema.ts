@@ -14,6 +14,7 @@ export const typeDefs = gql`
 
   type Query {
     getMessages: [Message!]!
+    validateJWT(token: String!): String!
   }
   type Mutation {
     register(username: String!, password: String!): String!

@@ -69,7 +69,7 @@ export const Mutation = {
     }
 
     pubsub.publish("NEW_MSG", {
-      newMessage: { user: username, message: params.message },
+      newMessage: { user: username, message: params.message, id: myNewID },
     });
 
     return {

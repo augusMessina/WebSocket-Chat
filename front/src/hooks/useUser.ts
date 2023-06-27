@@ -1,8 +1,25 @@
-import { Context } from "@/context/JWTContext";
+import { JWTContext } from "@/context/JWTContext";
+import { gql, useQuery } from "@apollo/client";
 import { useCallback, useContext } from "react";
 
+type QueryResponse = {
+  validateJWT: string;
+};
+
+const VALIDATE_JWT = gql`
+  query Query($token: String!) {
+    validateJWT(token: $token)
+  }
+`;
+
 export default function useUser() {
-  const { JWT, setJWT } = useContext(Context);
+  const { JWT, setJWT, isLoading } = useContext(JWTContext);
+
+  const { error } = useQuery<QueryResponse>(VALIDATE_JWT, {
+    variables: {
+      token: JWT,
+    },
+  });
 
   const login = useCallback(
     (JWT: string) => {
@@ -12,8 +29,17 @@ export default function useUser() {
     [setJWT]
   );
 
+  const logut = useCallback(() => {
+    setJWT(null);
+    window.localStorage.removeItem("JWT");
+  }, [setJWT]);
+
   return {
     isLogged: Boolean(JWT),
+    isLoading,
+    isValid: !error,
     login,
+    logut,
+    JWT,
   };
 }
