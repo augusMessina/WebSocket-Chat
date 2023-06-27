@@ -1,9 +1,12 @@
 import Login from "@/components/Login"
+import CredentialsContextProvider from "@/context/CredentialsContext"
 
 
 const LoginPage = () => {
     return(
-        <Login></Login>
+        <CredentialsContextProvider>
+            <Login></Login>
+        </CredentialsContextProvider>
     )
     
 }

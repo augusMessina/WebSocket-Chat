@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 
 export const Context = createContext<any>({})
 
-export default function UserContextProvider({children}) {
+export default function JWTContextProvider({children}) {
     const [JWT, setJWT] = useState<string | null>(null)
 
     useEffect(() => {

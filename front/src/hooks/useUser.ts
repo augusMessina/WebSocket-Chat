@@ -1,4 +1,4 @@
-import { Context } from "@/context/UserContext";
+import { Context } from "@/context/JWTContext";
 import { useCallback, useContext } from "react";
 
 export default function useUser() {
