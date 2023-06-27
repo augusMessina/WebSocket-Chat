@@ -1,5 +1,5 @@
 import useUser from "@/hooks/useUser";
-import { ErrorMessage, LogoutButton, Menu, MessageBubble, MessagesDisplay, NewMessage, SendMessageDiv, UserBubble } from "@/styles/myStyledComponents";
+import { ChatMenu, ErrorMessage, LogoutButton, Menu, MenuCentered, MessageBubble, MessageInput, MessagesDisplay, NewMessage, SendButton, SendMessageDiv, UserBubble, Wrapper } from "@/styles/myStyledComponents";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 
@@ -102,40 +102,45 @@ const Chat = () => {
 
     return (
         <>
-        
-        <Menu>
-            <div style={{width: '100%', display: 'flex', justifyContent: 'end', marginTop: '10px', marginRight: '10px'}}>
-                <LogoutButton onClick={logut}>Logout</LogoutButton>
-            </div>
-            <h1>Websocket Chat</h1>
-            <MessagesDisplay ref={messagesDisplayRef}>
-            {
-                messageList.map(message => (
-                    <NewMessage key={message?.id}>
-                        <UserBubble>{message?.user}</UserBubble>
-                        <MessageBubble>{message?.message}</MessageBubble>
-                    </NewMessage>
-                ))
-            }
-            </MessagesDisplay>
+        <div style={{width: '100%', display: 'flex', justifyContent: 'end', marginTop: '10px', marginRight: '10px'}}>
+            <LogoutButton onClick={logut}>Logout</LogoutButton>
+        </div>
+        <Wrapper>
+        <ChatMenu>
+            hello
+        </ChatMenu>
+        <ChatMenu>
+            <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
+                <MessagesDisplay ref={messagesDisplayRef}>
+                {
+                    messageList.map(message => (
+                        <NewMessage key={message?.id}>
+                            <UserBubble>{message?.user}</UserBubble>
+                            <MessageBubble>{message?.message}</MessageBubble>
+                        </NewMessage>
+                    ))
+                }
+                </MessagesDisplay>
 
-            <SendMessageDiv>
-                <input style={{width: "100%"}} value={message} placeholder="Message.." 
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={(e) => {
-                    if(e.key === 'Enter'){
-                        sendMessage();
-                    }
-                }}
-                ></input>
-                <button onClick={sendMessage}>Send</button>
-            </SendMessageDiv>
+                <SendMessageDiv>
+                    <MessageInput value={message} placeholder="Message.." 
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                        if(e.key === 'Enter'){
+                            sendMessage();
+                        }
+                    }}
+                    ></MessageInput>
+                    <SendButton onClick={sendMessage}>Send</SendButton>
+                </SendMessageDiv>
+            </div>
+            
 
             {
                 showError && <ErrorMessage>You must give an user name and a message text</ErrorMessage>
             }
-        </Menu>
-        
+        </ChatMenu>
+        </Wrapper>
         </>
     );
 };

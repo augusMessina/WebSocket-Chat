@@ -11,6 +11,7 @@ export const Wrapper = styled.div`
     height: 100%;
     width: 100%;
     justify-content: center;
+    gap: 20px;
 `;
 
 export const Menu = styled.div`
@@ -27,6 +28,19 @@ export const MenuCentered = styled.div`
     align-items: center;
     gap: 10px;
     margin-bottom: 200px;
+    background: #00000031;
+    backdrop-filter: blur(5px);
+    padding: 30px;
+    border-radius: 15px;
+`;
+
+export const ChatMenu = styled.div`
+    margin-bottom: 100px;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
     background: #00000031;
     backdrop-filter: blur(5px);
     padding: 30px;
@@ -55,8 +69,8 @@ export const MessagesDisplay = styled.div`
     flex-direction: column;
     overflow-y: hidden;
     overflow-x: hidden;
-    height: 500px;
-    width: 350px;
+    height: 700px;
+    width: 1000px;
     /* border: 5px solid black; */
     border-radius: 5px;
     padding: 10px;
@@ -119,7 +133,10 @@ export const UserBubble = styled.p`
 export const SendMessageDiv = styled.div`
     display: flex;
     flex-direction: row;
-    width: 370px;  
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 100%;  
 `;
 
 export const ErrorMessage = styled.p`
@@ -149,10 +166,34 @@ export const LogoutButton = styled.button`
     }
 `;
 
+export const SendButton = styled.button`
+    width: 100px;
+    height: 98%;
+    border-radius: 10px;
+    background: #2b2b2b;
+    border-width: 0px;
+    color: #757575;
+    &:hover{
+        background: #00000035;
+        color: white;
+        border: 1px solid white;
+    }
+`;
+
 export const LoginInput = styled.input`
     transition: 0.2s;
     border-radius: 10px;
     &:focus{
         padding: 12px;
+    }
+`;
+
+export const MessageInput = styled.input`
+    width: 100%;
+    border-radius: 10px;
+    background: #2b2b2b;
+    color: white;
+    &:focus{
+        background: #00000035;
     }
 `;
