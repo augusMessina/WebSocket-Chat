@@ -1,10 +1,10 @@
-import { Message, User } from "../types";
+import { Chat, User } from "../types";
 import { ObjectId } from "mongodb";
 
-export type MessageSchema = Message & {
+export type UserSchema = Omit<User, "id"> & {
   _id: ObjectId;
 };
 
-export type UserSchema = User & {
+export type ChatSchema = Omit<Chat, "id"> & {
   _id: ObjectId;
 };

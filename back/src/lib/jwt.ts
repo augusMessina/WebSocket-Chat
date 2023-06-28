@@ -13,5 +13,8 @@ export const generateToken = (username: string, password: string) => {
 
 export const checkToken = async (token: string) => {
   const user = await usersCollection.findOne({ token });
-  return user?.username;
+  if (!user) {
+    throw new Error("invalid token");
+  }
+  return user;
 };
