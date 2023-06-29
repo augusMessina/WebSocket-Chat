@@ -2,8 +2,9 @@ import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import { chatsCollection, usersCollection } from "../db/dbconnection";
 import { pubsub } from "../main";
-import { Chat, Message, User } from "../types";
+import { Chat, Message, PublicUser, User } from "../types";
 import { checkToken, generateToken } from "../lib/jwt";
+import { ChatSchema } from "../db/dbSchema";
 
 export const Mutation = {
   // parmas: username and password.
@@ -12,7 +13,9 @@ export const Mutation = {
   register: async (_: unknown, params: User): Promise<string> => {
     const { username, password } = params;
     try {
-      const searchUser = await usersCollection.findOne({ username });
+      const searchUser = await usersCollection.findOne({
+        username: username.toLowerCase(),
+      });
       if (searchUser) {
         throw new Error("username already taken");
       }
@@ -21,7 +24,7 @@ export const Mutation = {
       const hashPassword = await bcrypt.hash(password, 10);
 
       await usersCollection.insertOne({
-        username,
+        username: username.toLowerCase(),
         password: hashPassword,
         token,
         _id: new ObjectId(),
@@ -41,7 +44,9 @@ export const Mutation = {
   login: async (_: unknown, params: User): Promise<string> => {
     const { username, password } = params;
     try {
-      const user = await usersCollection.findOne({ username });
+      const user = await usersCollection.findOne({
+        username: username.toLowerCase(),
+      });
       if (user && (await bcrypt.compare(password, user.password))) {
         const token = await generateToken(user.username, user.password);
         await usersCollection.updateOne(
@@ -65,7 +70,7 @@ export const Mutation = {
       token: string;
       message: string;
       chatID: string;
-      timestamp: string;
+      timestamp: number;
     }
   ): Promise<{ info: string; message: Message }> => {
     const { token, message, chatID, timestamp } = params;
@@ -87,13 +92,14 @@ export const Mutation = {
             messages: {
               id: myNewID.toString(),
               user: user.username,
-              message,
+              message: message.trim(),
               timestamp,
             },
           },
         }
       );
 
+      // puts the most recent chat on top
       if (chat.modal === "FRIEND_CHAT") {
         const userChats = user.chats;
         const updatedChatIndex = userChats.findIndex((chat) => chat === chatID);
@@ -111,8 +117,36 @@ export const Mutation = {
         );
       }
 
+      await usersCollection.updateMany(
+        { _id: { $in: chat.members.map((member) => new ObjectId(member.id)) } },
+        {
+          $push: {
+            mailbox: {
+              id_passed: chat._id.toString(),
+              name: chat.name,
+              modal: "MSG",
+            },
+          },
+        }
+      );
+
       pubsub.publish("NEW_MSG", {
-        newMessage: { user: user.username, message, id: myNewID, timestamp },
+        newMessage: {
+          user: user.username,
+          message,
+          id: myNewID,
+          timestamp,
+          chatID,
+        },
+      });
+
+      pubsub.publish("NEW_NOTIF", {
+        notification: {
+          id_receiver: chat.members.map((member) => member.id),
+          modal: "MSG",
+          id_passed: chat._id.toString(),
+          name: chat.name,
+        },
       });
 
       return {
@@ -131,7 +165,7 @@ export const Mutation = {
   // parmas: usern JWT, name of chat, modality of chat (PUBLIC or PRIVATE).
   // function: generate chat document
   // returns: info and chat
-  createchat: async (
+  createChat: async (
     _: unknown,
     params: { token: string; name: string; modal: string }
   ): Promise<{ info: string; chat: Chat }> => {
@@ -145,19 +179,22 @@ export const Mutation = {
 
       if (
         modal === "PUBLIC" &&
-        (await chatsCollection.findOne({ name, modal: "PUBLIC" }))
+        (await chatsCollection.findOne({
+          name: name.toLowerCase(),
+          modal: "PUBLIC",
+        }))
       ) {
         throw new Error("chat name already taken");
       }
 
       const user = await checkToken(token);
 
-      const newChat = {
-        name,
+      const newChat: ChatSchema = {
+        name: name.toLowerCase(),
         modal,
         _id: new ObjectId(),
         messages: [],
-        members: [user._id.toString()],
+        members: [{ id: user._id.toString(), username: user.username }],
       };
 
       await chatsCollection.insertOne(newChat);
@@ -179,7 +216,7 @@ export const Mutation = {
         },
       };
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   // parmas: user JWT and chat ID.
@@ -197,7 +234,9 @@ export const Mutation = {
       await chatsCollection.updateOne(
         { _id: new ObjectId(chatID) },
         {
-          $push: { members: user._id.toString() },
+          $push: {
+            members: { id: user._id.toString(), username: user.username },
+          },
         }
       );
 
@@ -210,7 +249,7 @@ export const Mutation = {
 
       return "joined chat";
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   // parmas: user JWT and chat ID.
@@ -228,7 +267,7 @@ export const Mutation = {
       await chatsCollection.updateOne(
         { _id: new ObjectId(chatID) },
         {
-          $pull: { members: user._id.toString() },
+          $pull: { members: { id: user._id.toString() } },
         }
       );
 
@@ -241,7 +280,7 @@ export const Mutation = {
 
       return "left chat";
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   // parmas: user JWT, ID of receiver user, modality of invitation (FRIEND or CHAT).
@@ -292,6 +331,15 @@ export const Mutation = {
             },
           }
         );
+
+        pubsub.publish("NEW_NOTIF", {
+          notification: {
+            id_receiver: receiver._id.toString(),
+            modal: "CHAT",
+            id_passed: chat._id.toString(),
+            name: chat.name,
+          },
+        });
       } else {
         await usersCollection.updateOne(
           { _id: receiver._id },
@@ -305,11 +353,20 @@ export const Mutation = {
             },
           }
         );
+
+        pubsub.publish("NEW_NOTIF", {
+          notification: {
+            id_receiver: receiver._id.toString(),
+            modal: "FRIEND",
+            id_passed: sender._id.toString(),
+            name: sender.username,
+          },
+        });
       }
 
       return "invitation sent";
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   // parmas: user JWT and ID passed to invitation.
@@ -343,7 +400,9 @@ export const Mutation = {
         await chatsCollection.updateOne(
           { _id: new ObjectId(invitation.id_passed) },
           {
-            $push: { members: user._id.toString() },
+            $push: {
+              members: { id: user._id.toString(), username: user.username },
+            },
           }
         );
 
@@ -356,7 +415,10 @@ export const Mutation = {
           name: "FRIEND_CHAT",
           messages: [],
           modal: "FRIEND_CHAT",
-          members: [user._id.toString(), invitation.id_passed],
+          members: [
+            { id: user._id.toString(), username: user.username },
+            { id: invitation.id_passed, username: invitation.name },
+          ],
         });
 
         await usersCollection.updateOne(
@@ -375,7 +437,7 @@ export const Mutation = {
         return "friend request accepted";
       }
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   // parmas: user JWT, ID of invitatin
@@ -402,7 +464,31 @@ export const Mutation = {
       }
       return "invitation removed";
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
+    }
+  },
+  readMessages: async (
+    _: unknown,
+    params: { token: string; chatID: string }
+  ): Promise<string> => {
+    try {
+      const { token, chatID } = params;
+
+      const user = await checkToken(token);
+
+      const checkUpdate = await usersCollection.updateOne(
+        { _id: user._id },
+        {
+          $pull: { mailbox: { id_passed: chatID, modal: "MSG" } },
+        }
+      );
+
+      if (!checkUpdate) {
+        throw new Error("invalid chat ID");
+      }
+      return "messages read";
+    } catch (e) {
+      throw new Error((e as Error).message);
     }
   },
   // parmas: user JWT, ID of fiend
@@ -429,7 +515,7 @@ export const Mutation = {
       }
       return "friend removed";
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   clearMailbox: async (_: unknown, params: { token: string }) => {
@@ -445,7 +531,7 @@ export const Mutation = {
 
       return "mailbox cleared";
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   clearChats: async (_: unknown): Promise<string> => {

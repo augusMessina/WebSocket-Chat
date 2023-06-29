@@ -4,7 +4,7 @@ export type Message = {
   id: string;
   user: string;
   message: string;
-  timestamp: string;
+  timestamp: number;
 };
 
 export type Notif = {
@@ -13,7 +13,7 @@ export type Notif = {
   name: string;
 };
 
-export type Friend = {
+export type PublicUser = {
   id: string;
   username: string;
 };
@@ -23,7 +23,7 @@ export type User = {
   username: string;
   password: string;
   token: string;
-  friendList: Friend[];
+  friendList: PublicUser[];
   chats: string[];
   mailbox: Notif[];
 };
@@ -33,5 +33,5 @@ export type Chat = {
   name: string;
   messages: Message[];
   modal: string;
-  members: string[];
+  members: PublicUser[];
 };

@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb";
 import { chatsCollection, usersCollection } from "../db/dbconnection";
 import { checkToken } from "../lib/jwt";
-import { Chat, Friend, Message, User } from "../types";
+import { Chat, PublicUser, Message, User } from "../types";
 
 export const Query = {
   getMessages: async (
     _: unknown,
-    params: { chatID; msgCount: number }
+    params: { chatID: string; msgCount: number }
   ): Promise<Message[]> => {
     try {
       const { chatID, msgCount } = params;
@@ -34,7 +34,7 @@ export const Query = {
         mailbox: user.mailbox,
       };
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   getChatData: async (
@@ -57,7 +57,7 @@ export const Query = {
         modal: chat.modal,
       };
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   getPublicChats: async (_: unknown): Promise<Chat[]> => {
@@ -74,13 +74,13 @@ export const Query = {
         modal: chat.modal,
       }));
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   },
   getFriendlist: async (
     _: unknown,
     params: { token: string; searchName: string }
-  ): Promise<Friend[]> => {
+  ): Promise<PublicUser[]> => {
     try {
       const { token, searchName } = params;
 
@@ -101,8 +101,31 @@ export const Query = {
           username: user.username,
         }));
     } catch (e) {
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
+  },
+  getUsers: async (_: unknown): Promise<User[]> => {
+    const users = await usersCollection.find({}).toArray();
+
+    return users.map((user) => ({
+      id: user._id.toString(),
+      username: user.username,
+      password: user.password,
+      token: user.token,
+      chats: user.chats,
+      friendList: user.friendList,
+      mailbox: user.mailbox,
+    }));
+  },
+  getChats: async (_: unknown): Promise<Chat[]> => {
+    const chats = await chatsCollection.find({}).toArray();
+    return chats.map((chat) => ({
+      id: chat._id.toString(),
+      name: chat.name,
+      messages: chat.messages,
+      members: chat.members,
+      modal: chat.modal,
+    }));
   },
   // validateJWT: async (
   //   _: unknown,
