@@ -1,28 +1,117 @@
-import { messagesCollection, usersCollection } from "../db/dbconnection";
+import { ObjectId } from "mongodb";
+import { chatsCollection, usersCollection } from "../db/dbconnection";
 import { checkToken } from "../lib/jwt";
-import { Message, User } from "../types";
+import { Chat, Friend, Message, User } from "../types";
 
 export const Query = {
-  getMessages: async (_: unknown): Promise<(Message & { id: string })[]> => {
+  getMessages: async (
+    _: unknown,
+    params: { chatID; msgCount: number }
+  ): Promise<Message[]> => {
     try {
-      const messages = await messagesCollection.find({}).toArray();
-      return messages.map((message) => ({
-        user: message.user,
-        message: message.message,
-        id: message._id.toString(),
-      }));
+      const { chatID, msgCount } = params;
+      const chat = await chatsCollection.findOne({ _id: new ObjectId(chatID) });
+      if (!chat) {
+        throw new Error("invalid chat ID");
+      }
+
+      return chat.messages.splice(msgCount * 100, (msgCount + 1) * 100);
     } catch (e) {
       throw new Error((e as Error).message);
     }
   },
-  validateJWT: async (
-    _: unknown,
-    params: { token: string }
-  ): Promise<string> => {
-    if (await checkToken(params.token)) {
-      return "valid";
-    } else {
-      throw new Error("invalid token");
+  getUserData: async (_: unknown, params: { token: string }): Promise<User> => {
+    try {
+      const user = await checkToken(params.token);
+
+      return {
+        id: user._id.toString(),
+        username: user.username,
+        password: user.password,
+        token: user.token,
+        friendList: user.friendList,
+        chats: user.chats,
+        mailbox: user.mailbox,
+      };
+    } catch (e) {
+      throw new Error(e);
     }
   },
+  getChatData: async (
+    _: unknown,
+    params: { chatID: string }
+  ): Promise<Chat> => {
+    try {
+      const chat = await chatsCollection.findOne({
+        _id: new ObjectId(params.chatID),
+      });
+      if (!chat) {
+        throw new Error("invalid chat ID");
+      }
+
+      return {
+        id: chat._id.toString(),
+        name: chat.name,
+        messages: chat.messages,
+        members: chat.members,
+        modal: chat.modal,
+      };
+    } catch (e) {
+      throw new Error(e);
+    }
+  },
+  getPublicChats: async (_: unknown): Promise<Chat[]> => {
+    try {
+      const publicChats = await chatsCollection
+        .find({ modal: "PUBLIC" })
+        .toArray();
+
+      return publicChats.map((chat) => ({
+        id: chat._id.toString(),
+        name: chat.name,
+        messages: chat.messages,
+        members: chat.members,
+        modal: chat.modal,
+      }));
+    } catch (e) {
+      throw new Error(e);
+    }
+  },
+  getFriendlist: async (
+    _: unknown,
+    params: { token: string; searchName: string }
+  ): Promise<Friend[]> => {
+    try {
+      const { token, searchName } = params;
+
+      const user = await checkToken(token);
+
+      const usersFriends = await usersCollection
+        .find({
+          _id: {
+            $in: user.friendList.map((friend) => new ObjectId(friend.id)),
+          },
+        })
+        .toArray();
+
+      return usersFriends
+        .filter((user) => user.username.toLowerCase().includes(searchName))
+        .map((user) => ({
+          id: user._id.toString(),
+          username: user.username,
+        }));
+    } catch (e) {
+      throw new Error(e);
+    }
+  },
+  // validateJWT: async (
+  //   _: unknown,
+  //   params: { token: string }
+  // ): Promise<string> => {
+  //   if (await checkToken(params.token)) {
+  //     return "valid";
+  //   } else {
+  //     throw new Error("invalid token");
+  //   }
+  // },
 };

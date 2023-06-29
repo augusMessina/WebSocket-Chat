@@ -9,8 +9,13 @@ export type Message = {
 
 export type Notif = {
   modal: string;
-  id_sender: string;
+  id_passed: string;
   name: string;
+};
+
+export type Friend = {
+  id: string;
+  username: string;
 };
 
 export type User = {
@@ -18,7 +23,7 @@ export type User = {
   username: string;
   password: string;
   token: string;
-  friendList: string[];
+  friendList: Friend[];
   chats: string[];
   mailbox: Notif[];
 };
