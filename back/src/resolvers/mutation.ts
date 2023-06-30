@@ -102,8 +102,10 @@ export const Mutation = {
       // puts the most recent chat on top
       if (chat.modal === "FRIEND_CHAT") {
         const userChats = user.chats;
-        const updatedChatIndex = userChats.findIndex((chat) => chat === chatID);
-        const updatedChat = userChats.find((chat) => chat === chatID);
+        const updatedChatIndex = userChats.findIndex(
+          (chat) => chat.id === chatID
+        );
+        const updatedChat = userChats[updatedChatIndex];
         if (updatedChat) {
           userChats.splice(updatedChatIndex, 1);
           userChats.unshift(updatedChat);
@@ -131,17 +133,17 @@ export const Mutation = {
       );
 
       pubsub.publish("NEW_MSG", {
-        newMessage: {
+        subChatMessages: {
           user: user.username,
           message,
-          id: myNewID,
+          id: myNewID.toString(),
           timestamp,
           chatID,
         },
       });
 
       pubsub.publish("NEW_NOTIF", {
-        notification: {
+        subNotifs: {
           id_receiver: chat.members.map((member) => member.id),
           modal: "MSG",
           id_passed: chat._id.toString(),
@@ -201,7 +203,7 @@ export const Mutation = {
       await usersCollection.updateOne(
         { _id: user._id },
         {
-          $push: { chats: newChat._id.toString() },
+          $push: { chats: { id: newChat._id.toString(), name: newChat.name } },
         }
       );
 
@@ -231,8 +233,13 @@ export const Mutation = {
 
       const user = await checkToken(token);
 
+      const chat = await chatsCollection.findOne({ _id: new ObjectId(chatID) });
+      if (!chat) {
+        throw new Error("invalid chat DID");
+      }
+
       await chatsCollection.updateOne(
-        { _id: new ObjectId(chatID) },
+        { _id: chat._id },
         {
           $push: {
             members: { id: user._id.toString(), username: user.username },
@@ -243,7 +250,7 @@ export const Mutation = {
       await usersCollection.updateOne(
         { _id: user._id },
         {
-          $push: { chats: chatID },
+          $push: { chats: { id: chat._id.toString(), name: chat.name } },
         }
       );
 
@@ -264,8 +271,13 @@ export const Mutation = {
 
       const user = await checkToken(token);
 
+      const chat = await chatsCollection.findOne({ _id: new ObjectId(chatID) });
+      if (!chat) {
+        throw new Error("invalid chat ID");
+      }
+
       await chatsCollection.updateOne(
-        { _id: new ObjectId(chatID) },
+        { _id: chat._id },
         {
           $pull: { members: { id: user._id.toString() } },
         }
@@ -274,7 +286,7 @@ export const Mutation = {
       await usersCollection.updateOne(
         { _id: user._id },
         {
-          $pull: { chats: chatID },
+          $pull: { chats: { id: chat._id.toString() } },
         }
       );
 
@@ -319,6 +331,11 @@ export const Mutation = {
         if (!chat) {
           throw new Error("invalid chat ID");
         }
+
+        if (chat.modal === "FRIEND_CHAT") {
+          throw new Error("cant send an invitation to a friend chat");
+        }
+
         await usersCollection.updateOne(
           { _id: receiver._id },
           {
@@ -333,8 +350,8 @@ export const Mutation = {
         );
 
         pubsub.publish("NEW_NOTIF", {
-          notification: {
-            id_receiver: receiver._id.toString(),
+          subNotifs: {
+            id_receiver: [receiver._id.toString()],
             modal: "CHAT",
             id_passed: chat._id.toString(),
             name: chat.name,
@@ -355,8 +372,8 @@ export const Mutation = {
         );
 
         pubsub.publish("NEW_NOTIF", {
-          notification: {
-            id_receiver: receiver._id.toString(),
+          subNotifs: {
+            id_receiver: [receiver._id.toString()],
             modal: "FRIEND",
             id_passed: sender._id.toString(),
             name: sender.username,
@@ -393,7 +410,10 @@ export const Mutation = {
         await usersCollection.updateOne(
           { _id: user._id },
           {
-            $push: { chats: invitation.id_passed },
+            $push: {
+              chats: { id: invitation.id_passed, name: invitation.name },
+            },
+            $pull: { mailbox: { id_passed: invitation.id_passed } },
           }
         );
 
@@ -428,8 +448,24 @@ export const Mutation = {
               friendList: {
                 id: invitation.id_passed,
                 username: invitation.name,
+                chat: newChatID.toString(),
               },
-              chats: newChatID.toString(),
+              chats: { id: newChatID.toString(), name: invitation.name },
+            },
+            $pull: { mailbox: { id_passed: invitation.id_passed } },
+          }
+        );
+
+        await usersCollection.updateOne(
+          { _id: new ObjectId(invitation.id_passed) },
+          {
+            $push: {
+              friendList: {
+                id: user._id.toString(),
+                username: user.username,
+                chat: newChatID.toString(),
+              },
+              chats: { id: newChatID.toString(), name: user.username },
             },
           }
         );
@@ -503,16 +539,32 @@ export const Mutation = {
 
       const user = await checkToken(token);
 
-      const checkUpdate = await usersCollection.updateOne(
+      const chatID = user.friendList.find(
+        (friend) => friend.id === friendID
+      )?.chat;
+
+      await usersCollection.updateOne(
         { _id: user._id },
         {
-          $pull: { friendList: { id: friendID } },
+          $pull: {
+            friendList: { id: friendID },
+            chats: { id: chatID },
+          },
         }
       );
 
-      if (!checkUpdate) {
-        throw new Error("invalid friend ID");
-      }
+      await usersCollection.updateOne(
+        { _id: new ObjectId(friendID) },
+        {
+          $pull: {
+            friendList: { id: user._id.toString() },
+            chats: { id: chatID },
+          },
+        }
+      );
+
+      await chatsCollection.deleteOne({ _id: new ObjectId(chatID) });
+
       return "friend removed";
     } catch (e) {
       throw new Error((e as Error).message);
@@ -540,7 +592,7 @@ export const Mutation = {
     } catch (e) {
       throw new Error((e as Error).message);
     }
-    return "All messages cleared.";
+    return "All chats cleared.";
   },
   clearUsers: async (_: unknown): Promise<string> => {
     try {

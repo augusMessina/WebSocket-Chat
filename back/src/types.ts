@@ -18,13 +18,20 @@ export type PublicUser = {
   username: string;
 };
 
+export type Friend = PublicUser & { chat: string };
+
+export type SimpleChat = {
+  id: string;
+  name: string;
+};
+
 export type User = {
   id: string;
   username: string;
   password: string;
   token: string;
-  friendList: PublicUser[];
-  chats: string[];
+  friendList: Friend[];
+  chats: SimpleChat[];
   mailbox: Notif[];
 };
 

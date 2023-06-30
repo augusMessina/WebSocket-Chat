@@ -30,7 +30,7 @@ export const Subscription = {
             throw new Error("invalid chat ID or user does not belong to chat");
           }
 
-          return payload.newMessage.chatID === chatID;
+          return payload.subChatMessages.chatID === chatID;
         } catch (e) {
           throw new Error((e as Error).message);
         }
@@ -43,7 +43,7 @@ export const Subscription = {
       async (payload, params: { token: string }) => {
         const { token } = params;
         const user = await checkToken(token);
-        return payload.notidication.id_receiver === user._id.toString();
+        return payload.subNotifs.id_receiver.includes(user._id.toString());
       }
     ),
   },

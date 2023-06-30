@@ -5,7 +5,7 @@ export const typeDefs = gql`
     id: ID!
     user: String!
     message: String!
-    timestamp: Int!
+    timestamp: Float!
   }
 
   type Notif {
@@ -27,13 +27,18 @@ export const typeDefs = gql`
     members: [PublicUser!]!
   }
 
+  type SimpleChat {
+    id: String!
+    name: String!
+  }
+
   type User {
     id: String!
     username: String!
     password: String!
     token: String!
     friendList: [PublicUser!]!
-    chats: [Chat!]!
+    chats: [SimpleChat!]!
     mailbox: [Notif!]!
   }
 
@@ -60,7 +65,7 @@ export const typeDefs = gql`
       token: String!
       message: String!
       chatID: String!
-      timestamp: Int!
+      timestamp: Float!
     ): Response!
     createChat(token: String!, name: String!, modal: String!): Response!
     joinChat(token: String!, chatID: String!): String!
