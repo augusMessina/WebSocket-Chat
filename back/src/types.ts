@@ -20,9 +20,10 @@ export type PublicUser = {
 
 export type Friend = PublicUser & { chat: string };
 
-export type SimpleChat = {
+export type UserChat = {
   id: string;
   name: string;
+  unreadMessages: number;
 };
 
 export type User = {
@@ -31,7 +32,7 @@ export type User = {
   password: string;
   token: string;
   friendList: Friend[];
-  chats: SimpleChat[];
+  chats: UserChat[];
   mailbox: Notif[];
 };
 

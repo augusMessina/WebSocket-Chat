@@ -19,6 +19,12 @@ export const typeDefs = gql`
     username: String!
   }
 
+  type Friend {
+    id: String!
+    username: String!
+    chat: String!
+  }
+
   type Chat {
     id: String!
     name: String!
@@ -27,9 +33,10 @@ export const typeDefs = gql`
     members: [PublicUser!]!
   }
 
-  type SimpleChat {
+  type UserChat {
     id: String!
     name: String!
+    unreadMessages: Int!
   }
 
   type User {
@@ -37,8 +44,8 @@ export const typeDefs = gql`
     username: String!
     password: String!
     token: String!
-    friendList: [PublicUser!]!
-    chats: [SimpleChat!]!
+    friendList: [Friend!]!
+    chats: [UserChat!]!
     mailbox: [Notif!]!
   }
 
@@ -78,7 +85,7 @@ export const typeDefs = gql`
     ): String!
     acceptInvitation(token: String!, invitID: String!): String!
     declineInvitation(token: String!, invitID: String!): String!
-    readMessages(token: String!, invitID: String!): String!
+    readMessages(token: String!, chatID: String!): String!
     removeFriend(token: String!, friendID: String!): String!
     clearMailbox(token: String!): String!
 

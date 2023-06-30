@@ -102,19 +102,22 @@ export const Mutation = {
       // puts the most recent chat on top
       if (chat.modal === "FRIEND_CHAT") {
         const userChats = user.chats;
-        const updatedChatIndex = userChats.findIndex(
-          (chat) => chat.id === chatID
-        );
-        const updatedChat = userChats[updatedChatIndex];
-        if (updatedChat) {
-          userChats.splice(updatedChatIndex, 1);
-          userChats.unshift(updatedChat);
+        const updatedChat = userChats.find((chat) => chat.id === chatID);
+        // const updatedChat = userChats[updatedChatIndex];
+        // if (updatedChat) {
+        //   userChats.splice(updatedChatIndex, 1);
+        //   userChats.unshift(updatedChat);
+        // }
+
+        if (!updatedChat) {
+          throw new Error("invalid chat ID");
         }
 
         await usersCollection.updateOne(
           { _id: user._id },
           {
-            $set: { chats: userChats },
+            $pull: { chats: { id: chat._id.toString() } },
+            $push: { chats: { $each: [updatedChat], $position: 0 } },
           }
         );
       }
@@ -122,13 +125,10 @@ export const Mutation = {
       await usersCollection.updateMany(
         { _id: { $in: chat.members.map((member) => new ObjectId(member.id)) } },
         {
-          $push: {
-            mailbox: {
-              id_passed: chat._id.toString(),
-              name: chat.name,
-              modal: "MSG",
-            },
-          },
+          $inc: { "chats.$[i].unreadMessages": 1 },
+        },
+        {
+          arrayFilters: [{ "i.id": chat._id.toString() }],
         }
       );
 
@@ -200,10 +200,17 @@ export const Mutation = {
       };
 
       await chatsCollection.insertOne(newChat);
+
       await usersCollection.updateOne(
         { _id: user._id },
         {
-          $push: { chats: { id: newChat._id.toString(), name: newChat.name } },
+          $push: {
+            chats: {
+              id: newChat._id.toString(),
+              name: newChat.name,
+              unreadMessages: 0,
+            },
+          },
         }
       );
 
@@ -235,7 +242,7 @@ export const Mutation = {
 
       const chat = await chatsCollection.findOne({ _id: new ObjectId(chatID) });
       if (!chat) {
-        throw new Error("invalid chat DID");
+        throw new Error("invalid chat ID");
       }
 
       await chatsCollection.updateOne(
@@ -250,7 +257,18 @@ export const Mutation = {
       await usersCollection.updateOne(
         { _id: user._id },
         {
-          $push: { chats: { id: chat._id.toString(), name: chat.name } },
+          $push: {
+            chats: {
+              $each: [
+                {
+                  id: chat._id.toString(),
+                  name: chat.name,
+                  unreadMessages: 0,
+                },
+              ],
+              $position: 0,
+            },
+          },
         }
       );
 
@@ -411,7 +429,16 @@ export const Mutation = {
           { _id: user._id },
           {
             $push: {
-              chats: { id: invitation.id_passed, name: invitation.name },
+              chats: {
+                $each: [
+                  {
+                    id: invitation.id_passed,
+                    name: invitation.name,
+                    unreadMessages: 0,
+                  },
+                ],
+                $position: 0,
+              },
             },
             $pull: { mailbox: { id_passed: invitation.id_passed } },
           }
@@ -450,7 +477,16 @@ export const Mutation = {
                 username: invitation.name,
                 chat: newChatID.toString(),
               },
-              chats: { id: newChatID.toString(), name: invitation.name },
+              chats: {
+                $each: [
+                  {
+                    id: newChatID.toString(),
+                    name: invitation.name,
+                    unreadMessages: 0,
+                  },
+                ],
+                $position: 0,
+              },
             },
             $pull: { mailbox: { id_passed: invitation.id_passed } },
           }
@@ -465,7 +501,16 @@ export const Mutation = {
                 username: user.username,
                 chat: newChatID.toString(),
               },
-              chats: { id: newChatID.toString(), name: user.username },
+              chats: {
+                $each: [
+                  {
+                    id: newChatID.toString(),
+                    name: user.username,
+                    unreadMessages: 0,
+                  },
+                ],
+                $position: 0,
+              },
             },
           }
         );
@@ -515,7 +560,10 @@ export const Mutation = {
       const checkUpdate = await usersCollection.updateOne(
         { _id: user._id },
         {
-          $pull: { mailbox: { id_passed: chatID, modal: "MSG" } },
+          $set: { "chats.$[i].unreadMessages": 0 },
+        },
+        {
+          arrayFilters: [{ "i.id": chatID }],
         }
       );
 
