@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import { chatsCollection, usersCollection } from "../db/dbconnection";
 import { pubsub } from "../main";
-import { Chat, Message, PublicUser, User } from "../types";
+import { Chat, Message, PublicUser, User, UserChat } from "../types";
 import { checkToken, generateToken } from "../lib/jwt";
 import { ChatSchema } from "../db/dbSchema";
 
@@ -103,23 +103,81 @@ export const Mutation = {
       if (chat.modal === "FRIEND_CHAT") {
         const userChats = user.chats;
         const updatedChat = userChats.find((chat) => chat.id === chatID);
-        // const updatedChat = userChats[updatedChatIndex];
-        // if (updatedChat) {
-        //   userChats.splice(updatedChatIndex, 1);
-        //   userChats.unshift(updatedChat);
-        // }
 
-        if (!updatedChat) {
-          throw new Error("invalid chat ID");
+        const chatMembers = chat.members.map((chat) => new ObjectId(chat.id));
+
+        const otherUserID = chatMembers.find((member) => {
+          console.log(member !== user._id);
+          console.log(member.toString() !== user._id.toString());
+          return member.toString() !== user._id.toString();
+        });
+
+        const otherUser = await usersCollection.findOne({
+          _id: new ObjectId(otherUserID?.id),
+        });
+
+        const otherUpdatedChat = otherUser?.chats.find(
+          (chat) => chat.id === chatID
+        );
+
+        const myID = user._id;
+
+        if (!updatedChat || !otherUpdatedChat || !otherUserID) {
+          throw new Error("invalid chat");
         }
 
-        await usersCollection.updateOne(
-          { _id: user._id },
+        console.log({ updatedChat, otherUpdatedChat });
+
+        await usersCollection.updateMany(
+          { _id: { $in: chatMembers } },
           {
             $pull: { chats: { id: chat._id.toString() } },
-            $push: { chats: { $each: [updatedChat], $position: 0 } },
           }
         );
+
+        await usersCollection.updateMany({ _id: { $in: chatMembers } }, [
+          {
+            $set: {
+              chats: {
+                $cond: {
+                  if: { $eq: ["$_id", myID] }, // Specify your condition here
+                  then: { $concatArrays: [[updatedChat], "$chats"] },
+                  else: { $concatArrays: [[otherUpdatedChat], "$chats"] },
+                },
+              },
+            },
+          },
+        ]);
+
+        // const otherUserID = chat.members.find(
+        //   (member) => member.id !== user._id.toString()
+        // );
+        // const otherUser = await usersCollection.findOne({
+        //   _id: new ObjectId(otherUserID?.id),
+        // });
+        // const otherUpdatedChat = otherUser?.chats.find(
+        //   (chat) => chat.id === chatID
+        // );
+
+        // if (!updatedChat || !otherUpdatedChat || !otherUserID) {
+        //   throw new Error("invalid chat");
+        // }
+
+        // await usersCollection.updateOne(
+        //   { _id: user._id },
+        //   {
+        //     $pull: { chats: { id: chat._id.toString() } },
+        //     $push: { chats: { $each: [], $position: 0 } },
+        //   }
+        // );
+
+        // await usersCollection.updateOne(
+        //   { _id: new ObjectId(otherUserID.id) },
+        //   {
+        //     $pull: { chats: { id: chat._id.toString() } },
+        //     $push: { chats: { $each: [otherUpdatedChat], $position: 0 } },
+        //   }
+        // );
       }
 
       await usersCollection.updateMany(
