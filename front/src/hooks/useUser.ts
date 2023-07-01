@@ -8,7 +8,9 @@ type QueryResponse = {
 
 const VALIDATE_JWT = gql`
   query Query($token: String!) {
-    validateJWT(token: $token)
+    getUserData(token: $token) {
+      username
+    }
   }
 `;
 

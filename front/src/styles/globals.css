@@ -44,6 +44,12 @@ button{
     transition: 0.2s;
 }
 
+div{
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+}
+
 .link {
     color: #8432bb;
 }

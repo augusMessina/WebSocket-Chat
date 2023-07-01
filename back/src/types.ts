@@ -23,6 +23,7 @@ export type Friend = PublicUser & { chat: string };
 export type UserChat = {
   id: string;
   name: string;
+  modal: string;
   unreadMessages: number;
 };
 

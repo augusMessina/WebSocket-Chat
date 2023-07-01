@@ -5,16 +5,21 @@ import { pubsub } from "../main";
 import { Chat, Message, PublicUser, User, UserChat } from "../types";
 import { checkToken, generateToken } from "../lib/jwt";
 import { ChatSchema } from "../db/dbSchema";
+import { checkSpecialChars } from "../lib/checkChars";
 
 export const Mutation = {
   // parmas: username and password.
   // function: generate user document
   // returns: JWT
   register: async (_: unknown, params: User): Promise<string> => {
-    const { username, password } = params;
+    let { username, password } = params;
+    username = username.trim();
+
+    checkSpecialChars(username);
+
     try {
       const searchUser = await usersCollection.findOne({
-        username: username.toLowerCase(),
+        username: { $regex: new RegExp(`^${username.toLowerCase()}`, "i") },
       });
       if (searchUser) {
         throw new Error("username already taken");
@@ -24,7 +29,7 @@ export const Mutation = {
       const hashPassword = await bcrypt.hash(password, 10);
 
       await usersCollection.insertOne({
-        username: username.toLowerCase(),
+        username: username,
         password: hashPassword,
         token,
         _id: new ObjectId(),
@@ -45,7 +50,7 @@ export const Mutation = {
     const { username, password } = params;
     try {
       const user = await usersCollection.findOne({
-        username: username.toLowerCase(),
+        username,
       });
       if (user && (await bcrypt.compare(password, user.password))) {
         const token = await generateToken(user.username, user.password);
@@ -106,11 +111,9 @@ export const Mutation = {
 
         const chatMembers = chat.members.map((chat) => new ObjectId(chat.id));
 
-        const otherUserID = chatMembers.find((member) => {
-          console.log(member !== user._id);
-          console.log(member.toString() !== user._id.toString());
-          return member.toString() !== user._id.toString();
-        });
+        const otherUserID = chatMembers.find(
+          (member) => member.toString() !== user._id.toString()
+        );
 
         const otherUser = await usersCollection.findOne({
           _id: new ObjectId(otherUserID?.id),
@@ -120,13 +123,9 @@ export const Mutation = {
           (chat) => chat.id === chatID
         );
 
-        const myID = user._id;
-
         if (!updatedChat || !otherUpdatedChat || !otherUserID) {
           throw new Error("invalid chat");
         }
-
-        console.log({ updatedChat, otherUpdatedChat });
 
         await usersCollection.updateMany(
           { _id: { $in: chatMembers } },
@@ -140,7 +139,7 @@ export const Mutation = {
             $set: {
               chats: {
                 $cond: {
-                  if: { $eq: ["$_id", myID] }, // Specify your condition here
+                  if: { $eq: ["$_id", user._id] }, // Specify your condition here
                   then: { $concatArrays: [[updatedChat], "$chats"] },
                   else: { $concatArrays: [[otherUpdatedChat], "$chats"] },
                 },
@@ -266,6 +265,7 @@ export const Mutation = {
             chats: {
               id: newChat._id.toString(),
               name: newChat.name,
+              modal: "CHAT",
               unreadMessages: 0,
             },
           },
@@ -321,6 +321,7 @@ export const Mutation = {
                 {
                   id: chat._id.toString(),
                   name: chat.name,
+                  modal: "CHAT",
                   unreadMessages: 0,
                 },
               ],
@@ -492,6 +493,7 @@ export const Mutation = {
                   {
                     id: invitation.id_passed,
                     name: invitation.name,
+                    modal: "CHAT",
                     unreadMessages: 0,
                   },
                 ],
@@ -540,6 +542,7 @@ export const Mutation = {
                   {
                     id: newChatID.toString(),
                     name: invitation.name,
+                    modal: "FRIEND",
                     unreadMessages: 0,
                   },
                 ],
@@ -564,6 +567,7 @@ export const Mutation = {
                   {
                     id: newChatID.toString(),
                     name: user.username,
+                    modal: "FRIEND",
                     unreadMessages: 0,
                   },
                 ],

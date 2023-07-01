@@ -1,4 +1,4 @@
-import Chat from '@/components/chat'
+import Chat from '@/components/Chat'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import useUser from '@/hooks/useUser'
@@ -12,7 +12,7 @@ export default function Home() {
   const {isLogged, isLoading, isValid} = useUser()
 
   useEffect(() => {
-    if ((!isLogged && !isLoading) || (!isValid && !isLoading)) {
+    if (!isLoading && (!isLogged || !isValid)) {
       router.replace('/login')
     }
   }, [isLogged, router, isLoading, isValid])

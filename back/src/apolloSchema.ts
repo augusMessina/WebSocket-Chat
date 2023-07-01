@@ -36,6 +36,7 @@ export const typeDefs = gql`
   type UserChat {
     id: String!
     name: String!
+    modal: String!
     unreadMessages: Int!
   }
 
