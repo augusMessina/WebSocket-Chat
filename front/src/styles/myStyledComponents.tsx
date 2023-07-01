@@ -46,6 +46,7 @@ export const ChatBlock = styled.div`
     padding: 30px;
     border-radius: 15px;
     color: white;
+    
 `;
 
 export const FormFlex = styled.form`
@@ -70,9 +71,9 @@ export const MessagesDisplay = styled.div`
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    height: 700px;
-    width: 1000px;
-    /* border: 5px solid black; */
+    height: 600px;
+    width: 700px;
+    box-shadow: 1px 1px 10px black;
     border-radius: 15px;
     padding: 10px;
     gap: 20px;
@@ -100,9 +101,34 @@ export const MessagesDisplay = styled.div`
 
 `;
 
-export const NewMessage = styled.div`
+export const ChatsDiv = styled.div`
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 660px;
+    width: 200px;
+    border-radius: 15px;
+    padding: 10px;
+    gap: 10px;
+    background: transparent;
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: transparent;
+    }
+
+`;
+
+export const NewMessage = styled.div<{position: string}>`
+    display: flex;
+    flex-direction: column;
+    align-items: ${props => props.position};
     gap: 1px;
 `;
 
@@ -153,6 +179,17 @@ export const LoginButton = styled.button`
 
 export const LogoutButton = styled.button`
     width: 100px;
+    border-radius: 10px;
+    background: #03010463;
+    border-width: 0px;
+    color: white;
+    &:hover{
+        background: #0201037f;
+    }
+`;
+
+export const UserButton = styled.button`
+    width: 60px;
     border-radius: 10px;
     background: #03010463;
     border-width: 0px;

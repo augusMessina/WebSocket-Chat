@@ -49,6 +49,7 @@ export default class MyDocument extends Document {
             href="https://unpkg.com/css.gg@2.0.0/icons/css/eye-alt.css"
             rel="stylesheet"
           />
+          <link href='https://unpkg.com/css.gg@2.0.0/icons/css/mail.css' rel='stylesheet'/>
           {/* Add other custom stylesheets and meta tags */}
         </Head>
         <body>

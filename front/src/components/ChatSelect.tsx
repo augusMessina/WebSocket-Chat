@@ -1,5 +1,5 @@
-import { ChatBlock, ChatItem, LogoutButton } from "@/styles/myStyledComponents";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { ChatBlock, ChatItem, ChatsDiv } from "@/styles/myStyledComponents";
+import { Dispatch, SetStateAction, useEffect } from "react";
 
 type ChatList = [{id: string, name: string, modal: string, unreadMessages: number}] | undefined;
 
@@ -20,6 +20,7 @@ export default function ChatSelect (props:{chats: ChatList, chatID:string, setCh
         <>
         <ChatBlock>
             Chats
+            <ChatsDiv>
             {
                 chats?.map(chat => {
                     if(chat.modal === 'CHAT'){
@@ -31,9 +32,11 @@ export default function ChatSelect (props:{chats: ChatList, chatID:string, setCh
                     }
                 })
             }
+            </ChatsDiv>
         </ChatBlock>
         <ChatBlock style={{color: 'white'}}>
             Friends
+            <ChatsDiv>
             {
                 chats?.map(chat => {
                     if(chat.modal === 'FRIEND'){
@@ -45,6 +48,7 @@ export default function ChatSelect (props:{chats: ChatList, chatID:string, setCh
                     }
                 })
             }
+            </ChatsDiv>
         </ChatBlock>
         </>
     )
