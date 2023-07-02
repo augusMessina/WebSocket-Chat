@@ -42,11 +42,10 @@ export const ChatBlock = styled.div`
     align-items: center;
     gap: 10px;
     background: #00000031;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(15px);
     padding: 30px;
     border-radius: 15px;
     color: white;
-    
 `;
 
 export const FormFlex = styled.form`
@@ -125,6 +124,34 @@ export const ChatsDiv = styled.div`
 
 `;
 
+export const Mailbox = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 300px;
+    width: 500px;
+    border-radius: 15px;
+    padding: 10px;
+    gap: 10px;
+    background: #1e0d29ec;
+    color: white;
+    box-shadow: 1px 1px 10px black;
+    backdrop-filter: blur(30px);
+
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: transparent;
+    }
+`;
+
 export const NewMessage = styled.div<{position: string}>`
     display: flex;
     flex-direction: column;
@@ -161,6 +188,23 @@ export const SendMessageDiv = styled.div`
     width: 100%;  
 `;
 
+export const MailItem = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border-top: 1px solid #ffffff89;
+    border-bottom: 1px solid #ffffff89;
+    
+    div{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+`;
+
 export const ErrorMessage = styled.p`
     width: fit-content;
     color: red;
@@ -184,7 +228,7 @@ export const LogoutButton = styled.button`
     border-width: 0px;
     color: white;
     &:hover{
-        background: #0201037f;
+        background: #020103aa;
     }
 `;
 
@@ -195,7 +239,7 @@ export const UserButton = styled.button`
     border-width: 0px;
     color: white;
     &:hover{
-        background: #0201037f;
+        background: #020103aa;
     }
 `;
 

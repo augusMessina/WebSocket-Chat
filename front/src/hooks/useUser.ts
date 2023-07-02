@@ -31,7 +31,7 @@ export default function useUser() {
     [setJWT]
   );
 
-  const logut = useCallback(() => {
+  const logout = useCallback(() => {
     setJWT(null);
     window.localStorage.removeItem("JWT");
   }, [setJWT]);
@@ -41,7 +41,7 @@ export default function useUser() {
     isLoading,
     isValid: !error,
     login,
-    logut,
+    logout,
     JWT,
   };
 }

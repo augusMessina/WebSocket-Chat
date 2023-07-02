@@ -35,9 +35,13 @@ export default function ChatDisplay (props: {chatID: string, name: string, usern
                 {
                     messages?.map(message => {
                         const position = message.user === props.username ? 'end' : 'start';
+                        const time = new Date(message.timestamp);
                         return (
                         <NewMessage key={message?.id} position={position}>
-                            <UserBubble>{message?.user}</UserBubble>
+                            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '5px'}}>
+                                {position==='start' && <UserBubble>{message?.user}</UserBubble>}
+                                <p style={{margin: 0}}>{time.getHours()}:{time.getMinutes()}</p>
+                            </div>
                             <MessageBubble>{message?.message}</MessageBubble>
                         </NewMessage>
                         )

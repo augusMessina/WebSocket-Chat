@@ -64,6 +64,8 @@ export default function useUserData() {
     }
   );
 
+  console.log(data?.getUserData.mailbox);
+
   return {
     username: data?.getUserData.username,
     chats: data?.getUserData.chats,
