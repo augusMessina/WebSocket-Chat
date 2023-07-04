@@ -20,7 +20,7 @@ export default function Signup () {
         <>
         <Wrapper>
             <MenuCentered>
-                <Title>Create your ChatX account</Title>
+                <Title>Create your <br></br> ChatX account</Title>
                 <MutationContextProvider MUTATION={REGISTER_MUTATION} pageType="SIGNUP">
                     <UserForm></UserForm>
                 </MutationContextProvider>

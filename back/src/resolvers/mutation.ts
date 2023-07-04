@@ -35,6 +35,7 @@ export const Mutation = {
         _id: new ObjectId(),
         chats: [],
         friendList: [],
+        invitSent: [],
         mailbox: [],
       });
 
@@ -426,6 +427,19 @@ export const Mutation = {
           }
         );
 
+        await usersCollection.updateOne(
+          { _id: sender._id },
+          {
+            $push: {
+              invitSent: {
+                id_passed: receiver._id.toString(),
+                name: receiver.username,
+                modal: "CHAT",
+              },
+            },
+          }
+        );
+
         pubsub.publish("NEW_NOTIF", {
           subNotifs: {
             id_receiver: [receiver._id.toString()],
@@ -443,6 +457,19 @@ export const Mutation = {
                 modal,
                 id_passed: sender._id.toString(),
                 name: sender.username,
+              },
+            },
+          }
+        );
+
+        await usersCollection.updateOne(
+          { _id: sender._id },
+          {
+            $push: {
+              invitSent: {
+                id_passed: receiver._id.toString(),
+                name: receiver.username,
+                modal: "FRIEND",
               },
             },
           }

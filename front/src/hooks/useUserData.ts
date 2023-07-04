@@ -4,6 +4,7 @@ import { useContext } from "react";
 
 type QueryResponse = {
   getUserData: {
+    id: string;
     username: string;
     chats: [
       {
@@ -20,6 +21,12 @@ type QueryResponse = {
         name: string;
       }
     ];
+    invitSent: [
+      {
+        id_passed: string;
+        modal: string;
+      }
+    ];
     friendList: [
       {
         id: string;
@@ -32,6 +39,7 @@ type QueryResponse = {
 const GET_USER_DATA = gql`
   query GetUserData($token: String!) {
     getUserData(token: $token) {
+      id
       username
       chats {
         id
@@ -47,6 +55,10 @@ const GET_USER_DATA = gql`
       friendList {
         id
         username
+      }
+      invitSent {
+        id_passed
+        modal
       }
     }
   }
@@ -64,10 +76,10 @@ export default function useUserData() {
     }
   );
 
-  console.log(data?.getUserData.mailbox);
-
   return {
     username: data?.getUserData.username,
+    id: data?.getUserData.id,
+    invitSent: data?.getUserData.invitSent,
     chats: data?.getUserData.chats,
     mailbox: data?.getUserData.mailbox,
     friendList: data?.getUserData.friendList,

@@ -33,6 +33,7 @@ export type User = {
   password: string;
   token: string;
   friendList: Friend[];
+  invitSent: Notif[];
   chats: UserChat[];
   mailbox: Notif[];
 };

@@ -30,6 +30,7 @@ export const Query = {
         password: user.password,
         token: user.token,
         friendList: user.friendList,
+        invitSent: user.invitSent,
         chats: user.chats,
         mailbox: user.mailbox,
       };
@@ -104,18 +105,17 @@ export const Query = {
       throw new Error((e as Error).message);
     }
   },
-  getUsers: async (_: unknown): Promise<User[]> => {
+  getUsers: async (
+    _: unknown,
+    params: { searchName: string }
+  ): Promise<PublicUser[]> => {
     const users = await usersCollection.find({}).toArray();
 
-    return users.map((user) => ({
-      id: user._id.toString(),
-      username: user.username,
-      password: user.password,
-      token: user.token,
-      chats: user.chats,
-      friendList: user.friendList,
-      mailbox: user.mailbox,
-    }));
+    return users
+      .filter((user) =>
+        user.username.toLowerCase().includes(params.searchName.toLowerCase())
+      )
+      .map((user) => ({ id: user._id.toString(), username: user.username }));
   },
   getChats: async (_: unknown): Promise<Chat[]> => {
     const chats = await chatsCollection.find({}).toArray();

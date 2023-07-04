@@ -1,6 +1,6 @@
 import useUser from "@/hooks/useUser";
 import useUserData from "@/hooks/useUserData";
-import { ChatBlock, ErrorMessage, LogoutButton, UserButton, Menu, MenuCentered, MessageBubble, MessageInput, MessagesDisplay, NewMessage, SendButton, SendMessageDiv, UserBubble, Wrapper, Mailbox, MailItem, LoginButton } from "@/styles/myStyledComponents";
+import { ChatBlock, ErrorMessage, LogoutButton, UserButton, Menu, MenuCentered, MessageBubble, MessageInput, MessagesDisplay, NewMessage, SendButton, SendMessageDiv, UserBubble, Wrapper, MailItem, LoginButton } from "@/styles/myStyledComponents";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 import ChatSelect from "./ChatSelect";

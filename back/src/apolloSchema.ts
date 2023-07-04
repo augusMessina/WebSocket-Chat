@@ -46,6 +46,7 @@ export const typeDefs = gql`
     password: String!
     token: String!
     friendList: [Friend!]!
+    invitSent: [Notif!]!
     chats: [UserChat!]!
     mailbox: [Notif!]!
   }
@@ -62,7 +63,7 @@ export const typeDefs = gql`
     getChatData(chatID: String!): Chat!
     getPublicChats: [Chat!]!
     getFriendlist(token: String!, searchName: String!): [PublicUser!]!
-    getUsers: [User!]!
+    getUsers(searchName: String!): [PublicUser!]!
     getChats: [Chat!]!
   }
 

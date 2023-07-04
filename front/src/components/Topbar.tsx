@@ -1,5 +1,5 @@
 import useRespondMail from "@/hooks/useRespondMail";
-import { LoginButton, LogoutButton, MailItem, Mailbox, UserButton } from "@/styles/myStyledComponents";
+import { LoginButton, LogoutButton, MailItem, PopupScrollDiv, UserButton } from "@/styles/myStyledComponents";
 import { useEffect, useState } from "react";
 import Popup from "reactjs-popup";
 
@@ -45,7 +45,7 @@ export default function Topbar (props: {username: string|undefined, logoutFuncti
                         </div>
                     </UserButton>
                 } position={'bottom center'}>
-                    <Mailbox>
+                    <PopupScrollDiv>
                         {
                             mailbox?.length === 0 && <p>Nothing to see here..</p>
                         }
@@ -63,7 +63,7 @@ export default function Topbar (props: {username: string|undefined, logoutFuncti
                                 )
                             })
                         }
-                    </Mailbox>
+                    </PopupScrollDiv>
                 </Popup>
                 
                 <LogoutButton onClick={logoutFunction}>Logout</LogoutButton>

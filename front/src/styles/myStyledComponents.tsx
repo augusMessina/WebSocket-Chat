@@ -4,6 +4,19 @@ export const Title = styled.p`
     font-size: 60px;
     font-weight: 600;
     margin: 17px;
+    text-align: center;
+`;
+
+export const UnreadMsgs = styled.i`
+    background: red;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 15px;  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 `;
 
 export const Wrapper = styled.div`
@@ -103,6 +116,7 @@ export const MessagesDisplay = styled.div`
 export const ChatsDiv = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: center;
     overflow-y: auto;
     overflow-x: hidden;
     height: 660px;
@@ -112,19 +126,33 @@ export const ChatsDiv = styled.div`
     gap: 10px;
     background: transparent;
 
+    /* &::-webkit-scrollbar {
+        display: none;
+    } */
+
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+
     /* Track */
     &::-webkit-scrollbar-track {
-        background: transparent;
+        background: #f1f1f10;
     }
 
     /* Handle */
     &::-webkit-scrollbar-thumb {
-        background: transparent;
+        background: #d2d2d24c;
+        border-radius: 5px;
     }
+
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        background: #7d7d7d4b;
+    } 
 
 `;
 
-export const Mailbox = styled.div`
+export const PopupScrollDiv = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -133,7 +161,7 @@ export const Mailbox = styled.div`
     height: 300px;
     width: 500px;
     border-radius: 15px;
-    padding: 10px;
+    padding: 0px;
     gap: 10px;
     background: #1e0d29ec;
     color: white;
@@ -141,15 +169,40 @@ export const Mailbox = styled.div`
     backdrop-filter: blur(30px);
 
 
+    /* &::-webkit-scrollbar {
+        display: none;
+    } */
+
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+
     /* Track */
     &::-webkit-scrollbar-track {
-        background: transparent;
+        background: #f1f1f10;
     }
 
     /* Handle */
     &::-webkit-scrollbar-thumb {
-        background: transparent;
+        background: #d2d2d24c;
+        border-radius: 5px;
     }
+
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        background: #7d7d7d4b;
+    } 
+
+`;
+
+export const PopupContainer = styled.div`
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    background: #1e0d29ec;
+    border-radius: 15px;
 `;
 
 export const NewMessage = styled.div<{position: string}>`
@@ -205,6 +258,24 @@ export const MailItem = styled.div`
     }
 `;
 
+export const UserItem = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0px;
+    padding: 20px;
+    width: 90%;
+    border-top: 1px solid #ffffff89;
+    border-bottom: 1px solid #ffffff89;
+    
+    div{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+`;
+
 export const ErrorMessage = styled.p`
     width: fit-content;
     color: red;
@@ -213,6 +284,16 @@ export const ErrorMessage = styled.p`
 
 export const LoginButton = styled.button`
     width: 100px;
+    border-radius: 10px;
+    background: #8432bb;
+    color: white;
+    &:hover{
+        background: #542074;
+    }
+`;
+
+export const InvitationButton = styled.button`
+    width: 300px;
     border-radius: 10px;
     background: #8432bb;
     color: white;
@@ -247,7 +328,7 @@ export const SendButton = styled.button`
     width: 100px;
     height: 98%;
     border-radius: 10px;
-    background: #2b2b2b;
+    background: #00000074;
     border-width: 0px;
     color: #757575;
     &:hover{
@@ -265,11 +346,41 @@ export const LoginInput = styled.input`
     }
 `;
 
+export const RoundButton = styled.button`
+    width: 50px;
+    height: 50px;
+    background: #ffffffa2;
+    border-radius: 50%;  
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+
+    &:hover{
+        background: #8432bb;
+        color: white;
+    }
+`;
+
 export const MessageInput = styled.input`
     width: 100%;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background: #00000074;
+    color: white;
+    &:focus{
+        background: #0000009b;
+        border: 2px solid red;
+    }
+`;
+
+export const PopupInput = styled.input`
+    width: 90%;
     border-radius: 10px;
     background: #2b2b2b;
     color: white;
+    margin: 20px;
     &:focus{
         background: #00000035;
     }
