@@ -7,7 +7,7 @@ export const Title = styled.p`
     text-align: center;
 `;
 
-export const UnreadMsgs = styled.i`
+export const UnreadMsgs = styled.div`
     background: red;
     border-radius: 50%;
     width: 20px;
@@ -197,10 +197,11 @@ export const PopupScrollDiv = styled.div`
 
 export const PopupContainer = styled.div`
     width: 600px;
+    height: 479px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
+    justify-content: start;
     background: #1e0d29ec;
     border-radius: 15px;
 `;
@@ -302,6 +303,15 @@ export const InvitationButton = styled.button`
     }
 `;
 
+export const DisabledButton = styled.button`
+    width: 300px;
+    border-radius: 10px;
+    background: #1818189b;
+    color: white;
+    border-color: transparent;
+    cursor: auto;
+`;
+
 export const LogoutButton = styled.button`
     width: 100px;
     border-radius: 10px;
@@ -378,11 +388,11 @@ export const MessageInput = styled.input`
 export const PopupInput = styled.input`
     width: 90%;
     border-radius: 10px;
-    background: #2b2b2b;
+    background: #00000074;
     color: white;
     margin: 20px;
     &:focus{
-        background: #00000035;
+        background: #0000009b;
     }
 `;
 
@@ -391,7 +401,7 @@ export const ChatItem = styled.div`
     flex-direction: row;
     justify-content: start;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
     padding: 10px;
     width: 175px;
     border-radius: 10px;
@@ -403,4 +413,33 @@ export const ChatItem = styled.div`
     &:hover{
         background: #322c34a7;
     };
+`;
+
+export const NavBar = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    gap: 20px;
+    margin-top: 30px; 
+    margin-bottom: 10px; 
+`;
+
+export const NavItem = styled.div`
+    color: white;
+    padding: 10px;
+    transition: 0.3s;
+    cursor: pointer;
+
+    &:hover{
+        border-bottom: 5px solid #8432bb;
+    }
+`;
+
+export const CreateChatForm = styled.div`
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: start:  
 `;

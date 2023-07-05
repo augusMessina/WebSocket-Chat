@@ -23,22 +23,38 @@ export default function useGetUsers() {
   const { username, invitSent } = useUserData();
   const [searchName, setSearchName] = useState<string>("");
 
+  const [users, setUsers] = useState<
+    {
+      id: string;
+      username: string;
+      invited: boolean;
+    }[]
+  >();
+
   const { data, loading, error, refetch } = useQuery<QueryResponse>(GET_USERS, {
     variables: {
       searchName,
+    },
+    onCompleted: (data) => {
+      setUsers(
+        data.getUsers
+          .filter((user) => {
+            return (
+              user.username !== username &&
+              !invitSent?.some(
+                (sent) => sent.id_passed === user.id && sent.modal === "FRIEND"
+              )
+            );
+          })
+          .map((user) => ({ ...user, invited: false }))
+      );
     },
   });
 
   return {
     setSearchName,
-    users: data?.getUsers.filter((user) => {
-      return (
-        user.username !== username &&
-        !invitSent?.some(
-          (sent) => sent.id_passed === user.id && sent.modal === "FRIEND"
-        )
-      );
-    }),
+    users,
+    setUsers,
     loading,
     error,
     refetch,

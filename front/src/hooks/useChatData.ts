@@ -28,8 +28,8 @@ type SubResponse = {
 };
 
 const GET_CHAT_DATA = gql`
-  query GetChatData($chatId: String!) {
-    getChatData(chatID: $chatId) {
+  query GetChatData($token: String!, $chatId: String!) {
+    getChatData(token: $token, chatID: $chatId) {
       messages {
         id
         user
@@ -63,6 +63,7 @@ export default function useChatData(chatId: string) {
     GET_CHAT_DATA,
     {
       variables: {
+        token: JWT,
         chatId,
       },
       onCompleted(data) {

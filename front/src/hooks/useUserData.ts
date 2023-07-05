@@ -1,6 +1,6 @@
 import { JWTContext } from "@/context/JWTContext";
 import { gql, useQuery } from "@apollo/client";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 type QueryResponse = {
   getUserData: {
@@ -67,11 +67,43 @@ const GET_USER_DATA = gql`
 export default function useUserData() {
   const { JWT } = useContext(JWTContext);
 
+  const [chats, setChats] = useState<
+    | {
+        id: string;
+        name: string;
+        modal: string;
+        unreadMessages: number;
+      }[]
+    | undefined
+  >();
+
+  const [friends, setFriends] = useState<
+    | {
+        id: string;
+        username: string;
+        invited: boolean;
+      }[]
+    | undefined
+  >();
+
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
   const { data, loading, error, refetch } = useQuery<QueryResponse>(
     GET_USER_DATA,
     {
       variables: {
         token: JWT,
+      },
+      onCompleted: (data) => {
+        setChats(data?.getUserData.chats);
+        setFriends(
+          data.getUserData.friendList.map((friend) => ({
+            id: friend.id,
+            username: friend.username,
+            invited: false,
+          }))
+        );
+        setIsLoaded(true);
       },
     }
   );
@@ -80,11 +112,14 @@ export default function useUserData() {
     username: data?.getUserData.username,
     id: data?.getUserData.id,
     invitSent: data?.getUserData.invitSent,
-    chats: data?.getUserData.chats,
+    chats,
+    setChats,
     mailbox: data?.getUserData.mailbox,
-    friendList: data?.getUserData.friendList,
+    friends,
+    setFriends,
     loading,
     error,
     refetchData: refetch,
+    isLoaded,
   };
 }

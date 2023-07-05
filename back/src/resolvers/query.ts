@@ -40,9 +40,27 @@ export const Query = {
   },
   getChatData: async (
     _: unknown,
-    params: { chatID: string }
+    params: { token: string; chatID: string }
   ): Promise<Chat> => {
     try {
+      const { token, chatID } = params;
+
+      const user = await checkToken(token);
+
+      const checkUpdate = await usersCollection.updateOne(
+        { _id: user._id },
+        {
+          $set: { "chats.$[i].unreadMessages": 0 },
+        },
+        {
+          arrayFilters: [{ "i.id": chatID }],
+        }
+      );
+
+      if (!checkUpdate) {
+        throw new Error("invalid chat ID");
+      }
+
       const chat = await chatsCollection.findOne({
         _id: new ObjectId(params.chatID),
       });
@@ -61,19 +79,26 @@ export const Query = {
       throw new Error((e as Error).message);
     }
   },
-  getPublicChats: async (_: unknown): Promise<Chat[]> => {
+  getPublicChats: async (
+    _: unknown,
+    params: { searchName: string }
+  ): Promise<Chat[]> => {
     try {
       const publicChats = await chatsCollection
         .find({ modal: "PUBLIC" })
         .toArray();
 
-      return publicChats.map((chat) => ({
-        id: chat._id.toString(),
-        name: chat.name,
-        messages: chat.messages,
-        members: chat.members,
-        modal: chat.modal,
-      }));
+      return publicChats
+        .filter((chat) =>
+          chat.name.toLowerCase().includes(params.searchName.toLowerCase())
+        )
+        .map((chat) => ({
+          id: chat._id.toString(),
+          name: chat.name,
+          messages: chat.messages,
+          members: chat.members,
+          modal: chat.modal,
+        }));
     } catch (e) {
       throw new Error((e as Error).message);
     }

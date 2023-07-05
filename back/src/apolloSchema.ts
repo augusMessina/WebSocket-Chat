@@ -60,8 +60,8 @@ export const typeDefs = gql`
   type Query {
     getMessages(chatID: String!, msgCount: Int!): [Message!]!
     getUserData(token: String!): User!
-    getChatData(chatID: String!): Chat!
-    getPublicChats: [Chat!]!
+    getChatData(token: String!, chatID: String!): Chat!
+    getPublicChats(searchName: String!): [Chat!]!
     getFriendlist(token: String!, searchName: String!): [PublicUser!]!
     getUsers(searchName: String!): [PublicUser!]!
     getChats: [Chat!]!
