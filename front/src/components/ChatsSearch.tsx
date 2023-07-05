@@ -13,6 +13,7 @@ export default function ChatsSearch () {
                     publicChats?.map((chat, index) => (
                         <UserItem key={chat.id}>
                             {chat.name}
+                            <p style={{fontWeight: 100}}>{chat.members.length} members</p>
                             <div>
                                 {
                                     !chat.joined ? 

@@ -39,7 +39,7 @@ export default function Topbar (props: {username: string|undefined, logoutFuncti
             <p style={{marginLeft: '225px', marginBottom: 0, marginTop: '0px', fontSize: '40px'}}>{timeText} {username}</p>
             <div style={{marginRight: '225px', display: 'flex', gap: '10px'}}>
                 <Popup arrowStyle={{color: '#1E0D29'}} trigger={
-                    <UserButton>
+                    <UserButton onClick={async () => await refetchFunction()}>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                             <i className="gg-mail"></i>
                         </div>
@@ -47,7 +47,7 @@ export default function Topbar (props: {username: string|undefined, logoutFuncti
                 } position={'bottom center'}>
                     <PopupScrollDiv>
                         {
-                            mailbox?.length === 0 && <p>Nothing to see here..</p>
+                            mailbox?.length === 0 && <p>Your friend requests and chat invitations will arrive here</p>
                         }
                         {
                             mailbox?.map(request => {
