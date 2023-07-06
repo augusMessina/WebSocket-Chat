@@ -28,7 +28,7 @@ export default function CreateChat () {
     return (
         <CreateChatForm>
             <p>Name of the group chat:</p>
-            <PopupInput style={{margin: 0}} placeholder="Enter new chat name" onChange={(e) => {
+            <PopupInput style={{margin: 0}} placeholder="Enter new chat name" maxLength={16} onChange={(e) => {
                 setName(e.target.value);
                 if(modal === 'PUBLIC' && allPublicChats?.some(chat => chat.name.toLocaleLowerCase() === (e.target.value.toLocaleLowerCase()))) {
                     setShowError(true);

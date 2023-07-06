@@ -7,7 +7,7 @@ import { UserDataContext } from "@/context/UserDataContext";
 export default function Topbar () {
 
 
-    const {username, mailbox, logoutFunction, refetchData, newMails, setNewMails} = useContext(UserDataContext);
+    const {username, mailbox, logout, refetchData, newMails, setNewMails} = useContext(UserDataContext);
 
     const {accept, decline} = useRespondMail(refetchData)
 
@@ -68,7 +68,7 @@ export default function Topbar () {
                     </PopupScrollDiv>
                 </Popup>
                 
-                <LogoutButton onClick={logoutFunction}>Logout</LogoutButton>
+                <LogoutButton onClick={logout}>Logout</LogoutButton>
             </div>
             
         </div>

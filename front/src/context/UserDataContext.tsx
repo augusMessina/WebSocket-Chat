@@ -139,6 +139,9 @@ export default function UserDataContextProvider(props: CredentialsContextProvide
             }))
             );
             setMailbox(data.getUserData.mailbox);
+            if(data.getUserData.mailbox.length > 0){
+                setNewMails(true);
+            }
             setIsLoaded(true);
         },
         fetchPolicy: "network-only",
@@ -152,20 +155,34 @@ export default function UserDataContextProvider(props: CredentialsContextProvide
             const myData = data.data.data;
 
             if (myData.subNotifs.modal === "MSG") {
-            setChats(
-                chats?.map((chat) => {
-                if (chat.id === myData.subNotifs.id_passed && chat.id !== chatID) {
-                    return {
-                    id: chat.id,
-                    name: chat.name,
-                    modal: chat.modal,
-                    unreadMessages: chat.unreadMessages + 1,
-                    };
-                } else {
-                    return chat;
-                }
-                })
-            );
+                
+                
+                    
+                    const newChats = chats?.map((chat) => {
+                        if (chat.id === myData.subNotifs.id_passed && chat.id !== chatID) {
+                            return {
+                            id: chat.id,
+                            name: chat.name,
+                            modal: chat.modal,
+                            unreadMessages: chat.unreadMessages + 1,
+                            };
+                        } else {
+                            return chat;
+                        }
+                    });
+                    
+                    const editedChatIndex = chats?.findIndex(chat => chat.id === myData.subNotifs.id_passed);
+                    let editedChat;
+                    if (chats && typeof editedChatIndex !== 'undefined' && newChats){
+                        editedChat = newChats[editedChatIndex];
+                        newChats.splice(editedChatIndex, 1);
+                        newChats.unshift(editedChat)
+                    }
+                    
+                   
+
+                    setChats(newChats);
+                
             } else {
                 setNewMails(true);
             }
