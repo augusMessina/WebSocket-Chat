@@ -1,5 +1,5 @@
 import { JWTContext } from "@/context/JWTContext";
-import { gql, useQuery, useSubscription } from "@apollo/client";
+import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { useContext, useState } from "react";
 
 type QueryResponse = {
@@ -56,6 +56,12 @@ const SUB_MESSAGES = gql`
   }
 `;
 
+const READ_MESSAGES = gql`
+  mutation ReadMessages($token: String!, $chatId: String!) {
+    readMessages(token: $token, chatID: $chatId)
+  }
+`;
+
 export default function useChatData(chatId: string) {
   const { JWT } = useContext(JWTContext);
 
@@ -72,6 +78,8 @@ export default function useChatData(chatId: string) {
     }
   );
 
+  const [readMessages] = useMutation(READ_MESSAGES);
+
   const [messageList, setMessageList] = useState<
     { user: string; message: string; id: string; timestamp: number }[]
   >([]);
@@ -81,6 +89,12 @@ export default function useChatData(chatId: string) {
       console.log("message received");
       if (data.data.data) {
         setMessageList([...messageList, data.data.data.subChatMessages]);
+        readMessages({
+          variables: {
+            token: JWT,
+            chatId: chatId,
+          },
+        });
       }
     },
     variables: {

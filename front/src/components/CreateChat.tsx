@@ -50,7 +50,21 @@ export default function CreateChat () {
 
                                 :
 
-                                <DisabledButton>Invite</DisabledButton>
+                                <DisabledButton onClick={() => {
+                                    const newInvits = pendingInvits;
+                                    newInvits.splice(newInvits.findIndex(friendID => friendID === friend.id), 1);
+                                    setFriends(friends.map((subFriend, subIndex) => {
+                                        if(subIndex === index){
+                                            return {
+                                                id: subFriend.id,
+                                                username: subFriend.username,
+                                                invited: false,
+                                            }
+                                        } else {
+                                            return subFriend
+                                        }
+                                    }))
+                                }} style={{cursor: 'pointer'}}>Invite</DisabledButton>
                             }
                             
                         </div>

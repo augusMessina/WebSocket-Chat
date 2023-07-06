@@ -55,6 +55,7 @@ export default function useGetUsers() {
             .map((chat) => ({ ...chat, joined: false }))
         );
       },
+      fetchPolicy: "network-only",
     }
   );
 

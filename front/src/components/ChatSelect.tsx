@@ -1,16 +1,17 @@
 import { ChatBlock, ChatItem, ChatsDiv, RoundButton, UnreadMsgs } from "@/styles/myStyledComponents";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import Popup from "reactjs-popup";
 import UsersPopup from "./UsersPopup";
 import ChatsPopup from "./ChatsPopup";
+import { UserDataContext } from "@/context/UserDataContext";
 
 type ChatList = { id: string; name: string; modal: string; unreadMessages: number; }[] | undefined;
 
-export default function ChatSelect (props:{chats: ChatList, setChats: any, chatID:string, setChatID: Dispatch<SetStateAction<string>>, setChatName: Dispatch<SetStateAction<string>>, isLoaded: boolean}) {
+export default function ChatSelect () {
 
-    const {chats, setChats, chatID, setChatID, setChatName, isLoaded} = props;
+    const {chats, setChats, chatID, setChatID, setChatName, isLoaded} = useContext(UserDataContext);
 
-    const [unreadMsgs, setUnreadMsgs] = useState(chats?.map(chat => chat?.unreadMessages))
+    const [unreadMsgs, setUnreadMsgs] = useState(chats?.map((chat: any) => chat?.unreadMessages))
     
     useEffect(() => {
         if(isLoaded && chats && chats.length > 0){
@@ -25,13 +26,13 @@ export default function ChatSelect (props:{chats: ChatList, setChats: any, chatI
             Groups
             <ChatsDiv>
             {
-                chats?.map((chat, index) => {
+                chats?.map((chat: any, index: number) => {
                     if(chat.modal === 'CHAT'){
-                        const borderColor = chatID === chat.id ? 'white' : 'transparent';
-                        return <ChatItem key={chat.id} style={{border: `2px solid ${borderColor}`}} onClick={() => {
+                        const backColor = chatID === chat.id ? '#322c34a7' : '';
+                        return <ChatItem key={chat.id} style={{background: `${backColor}`}} onClick={() => {
                             setChatID(chat.id);
                             setChatName(chat.name);
-                            setChats(chats.map((chat, subindex) => {
+                            setChats(chats.map((chat: any, subindex: number) => {
                                 if(subindex === index){
                                     return {
                                         id: chat.id,
@@ -50,7 +51,7 @@ export default function ChatSelect (props:{chats: ChatList, setChats: any, chatI
                 })
             }
             <Popup trigger={<RoundButton>+</RoundButton>} modal overlayStyle={{background: '#000000a7'}}>
-                <ChatsPopup></ChatsPopup>
+                <ChatsPopup ></ChatsPopup>
             </Popup>
             </ChatsDiv>
         </ChatBlock>
@@ -58,13 +59,13 @@ export default function ChatSelect (props:{chats: ChatList, setChats: any, chatI
             Friends
             <ChatsDiv>
             {
-                chats?.map((chat, index) => {
+                chats?.map((chat: any, index: number) => {
                     if(chat.modal === 'FRIEND'){
                         const backColor = chatID === chat.id ? '#322c34a7' : '';
                         return <ChatItem key={chat.id} style={{background: `${backColor}`}} onClick={() => {
                             setChatID(chat.id);
                             setChatName(chat.name);
-                            setChats(chats.map((chat, subindex) => {
+                            setChats(chats.map((chat: any, subindex: number) => {
                                 if(subindex === index){
                                     return {
                                         id: chat.id,

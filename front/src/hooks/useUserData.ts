@@ -1,5 +1,5 @@
 import { JWTContext } from "@/context/JWTContext";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useContext, useState } from "react";
 
 type QueryResponse = {
@@ -36,6 +36,13 @@ type QueryResponse = {
   };
 };
 
+type SubResponse = {
+  subNotifs: {
+    id_passed: string;
+    modal: string;
+  };
+};
+
 const GET_USER_DATA = gql`
   query GetUserData($token: String!) {
     getUserData(token: $token) {
@@ -64,6 +71,15 @@ const GET_USER_DATA = gql`
   }
 `;
 
+const SUB_NOTIFS = gql`
+  subscription SubNotifs($token: String!) {
+    subNotifs(token: $token) {
+      id_passed
+      modal
+    }
+  }
+`;
+
 export default function useUserData() {
   const { JWT } = useContext(JWTContext);
 
@@ -86,6 +102,14 @@ export default function useUserData() {
     | undefined
   >();
 
+  const [mailbox, setMailbox] = useState<
+    {
+      id_passed: string;
+      name: string;
+      modal: string;
+    }[]
+  >();
+
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const { data, loading, error, refetch } = useQuery<QueryResponse>(
@@ -103,10 +127,41 @@ export default function useUserData() {
             invited: false,
           }))
         );
+        setMailbox(data.getUserData.mailbox);
         setIsLoaded(true);
       },
+      fetchPolicy: "network-only",
     }
   );
+
+  const sub = useSubscription<SubResponse>(SUB_NOTIFS, {
+    onData: (data) => {
+      console.log("notif received");
+      if (data.data.data) {
+        const myData = data.data.data;
+
+        if (myData.subNotifs.modal === "MSG") {
+          setChats(
+            chats?.map((chat) => {
+              if (chat.id === myData.subNotifs.id_passed) {
+                return {
+                  id: chat.id,
+                  name: chat.name,
+                  modal: chat.modal,
+                  unreadMessages: chat.unreadMessages + 1,
+                };
+              } else {
+                return chat;
+              }
+            })
+          );
+        }
+      }
+    },
+    variables: {
+      token: JWT,
+    },
+  });
 
   return {
     username: data?.getUserData.username,
@@ -114,7 +169,7 @@ export default function useUserData() {
     invitSent: data?.getUserData.invitSent,
     chats,
     setChats,
-    mailbox: data?.getUserData.mailbox,
+    mailbox,
     friends,
     setFriends,
     loading,

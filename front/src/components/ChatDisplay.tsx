@@ -1,11 +1,14 @@
 import useChatData from "@/hooks/useChatData";
 import useSendMessage from "@/hooks/useSendMessage";
 import { ChatBlock, MessageBubble, MessageInput, MessagesDisplay, NewMessage, SendButton, SendMessageDiv, UserBubble } from "@/styles/myStyledComponents";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { UserDataContext } from "@/context/UserDataContext";
 
-export default function ChatDisplay (props: {chatID: string, name: string, username: string|undefined}) {
+export default function ChatDisplay () {
 
-    const {messages, members} = useChatData(props.chatID);
+    const {chatID, chatName, username} = useContext(UserDataContext);
+
+    const {messages, members} = useChatData(chatID);
     const {sendMessage} = useSendMessage()
 
     const [message, setMessage] = useState<string>("")
@@ -21,7 +24,7 @@ export default function ChatDisplay (props: {chatID: string, name: string, usern
 
     const handleSendMessage = () => {
         if(message.trim() !== ''){
-            sendMessage(message, props.chatID);
+            sendMessage(message, chatID);
             setMessage("");
         }
     }
@@ -29,12 +32,12 @@ export default function ChatDisplay (props: {chatID: string, name: string, usern
 
     return (
         <ChatBlock>
-            {props.name}
+            {chatName}
             <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                 <MessagesDisplay ref={messagesDisplayRef}>
                 {
                     messages?.map(message => {
-                        const position = message.user === props.username ? 'end' : 'start';
+                        const position = message.user === username ? 'end' : 'start';
                         const time = new Date(message.timestamp);
                         return (
                         <NewMessage key={message?.id} position={position}>

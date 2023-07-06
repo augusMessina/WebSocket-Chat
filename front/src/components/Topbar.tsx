@@ -1,17 +1,15 @@
 import useRespondMail from "@/hooks/useRespondMail";
 import { LoginButton, LogoutButton, MailItem, PopupScrollDiv, UserButton } from "@/styles/myStyledComponents";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Popup from "reactjs-popup";
+import { UserDataContext } from "@/context/UserDataContext";
 
-export default function Topbar (props: {username: string|undefined, logoutFunction: () => void, refetchFunction: any, mailbox: {
-    id_passed: string;
-    modal: string;
-    name: string;
-}[] | undefined}) {
+export default function Topbar () {
 
-    const {username, mailbox, logoutFunction, refetchFunction} = props;
 
-    const {accept, decline} = useRespondMail(refetchFunction)
+    const {username, mailbox, logoutFunction, refetchData} = useContext(UserDataContext);
+
+    const {accept, decline} = useRespondMail(refetchData)
 
     const [timeText, setTimeText] = useState<string>('');
 
@@ -38,8 +36,8 @@ export default function Topbar (props: {username: string|undefined, logoutFuncti
         <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginRight: '10px'}}>
             <p style={{marginLeft: '225px', marginBottom: 0, marginTop: '0px', fontSize: '40px'}}>{timeText} {username}</p>
             <div style={{marginRight: '225px', display: 'flex', gap: '10px'}}>
-                <Popup arrowStyle={{color: '#1E0D29'}} trigger={
-                    <UserButton onClick={async () => await refetchFunction()}>
+                <Popup arrowStyle={{color: '#1E0D29'}} onOpen={async () => {await refetchData()}} trigger={
+                    <UserButton>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                             <i className="gg-mail"></i>
                         </div>
@@ -50,7 +48,7 @@ export default function Topbar (props: {username: string|undefined, logoutFuncti
                             mailbox?.length === 0 && <p>Your friend requests and chat invitations will arrive here</p>
                         }
                         {
-                            mailbox?.map(request => {
+                            mailbox?.map((request: any) => {
                                 const modal = request.modal === 'FRIEND' ? 'Friend request from' : 'Chat invitation to';
                                 return (
                                     <MailItem key={request.id_passed}>

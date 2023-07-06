@@ -2,6 +2,7 @@ import { JWTContext } from "@/context/JWTContext";
 import { gql, useQuery } from "@apollo/client";
 import { useContext, useState } from "react";
 import useUserData from "./useUserData";
+import { UserDataContext } from "@/context/UserDataContext";
 
 type QueryResponse = {
   getUsers: {
@@ -20,7 +21,7 @@ const GET_USERS = gql`
 `;
 
 export default function useGetUsers() {
-  const { username, invitSent } = useUserData();
+  const { username, invitSent, friends } = useContext(UserDataContext);
   const [searchName, setSearchName] = useState<string>("");
 
   const [users, setUsers] = useState<
@@ -42,13 +43,16 @@ export default function useGetUsers() {
             return (
               user.username !== username &&
               !invitSent?.some(
-                (sent) => sent.id_passed === user.id && sent.modal === "FRIEND"
-              )
+                (sent: any) =>
+                  sent.id_passed === user.id && sent.modal === "FRIEND"
+              ) &&
+              !friends?.some((friend: any) => friend.id === user.id)
             );
           })
           .map((user) => ({ ...user, invited: false }))
       );
     },
+    fetchPolicy: "network-only",
   });
 
   return {

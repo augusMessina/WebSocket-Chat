@@ -1,9 +1,12 @@
 import useGetChats from "@/hooks/useGetChats";
+import useJoinChat from "@/hooks/useJoinChat";
 import { DisabledButton, InvitationButton, PopupInput, PopupScrollDiv, UserItem } from "@/styles/myStyledComponents";
 
 export default function ChatsSearch () {
     
     const {setSearchName, loading, publicChats, setPublicChats,error, refetch} = useGetChats()
+
+    const {joinChat} = useJoinChat()
 
     return (
         <>
@@ -19,7 +22,7 @@ export default function ChatsSearch () {
                                     !chat.joined ? 
                                     
                                     <InvitationButton onClick={async () => {
-                                        // await sendInvitation(.id, 'FRIEND');
+                                        await joinChat(chat.id);
                                         setPublicChats(publicChats.map((subChat, subIndex) => {
                                             if(subIndex === index){
                                                 return {
