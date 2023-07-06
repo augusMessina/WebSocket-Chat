@@ -197,7 +197,7 @@ export const PopupScrollDiv = styled.div`
 
 export const PopupContainer = styled.div`
     width: 600px;
-    height: 479px;
+    min-height: 479px;
     display: flex;
     flex-direction: column;
     align-items: center;

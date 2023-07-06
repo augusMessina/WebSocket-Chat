@@ -92,6 +92,8 @@ export default function UserDataContextProvider(props: CredentialsContextProvide
     const [chatID, setChatID] = useState<string>('');
     const [chatName, setChatName] = useState<string>('');
 
+    const [newMails, setNewMails] = useState<boolean>(false);
+
     const [chats, setChats] = useState<
     | {
         id: string;
@@ -164,6 +166,8 @@ export default function UserDataContextProvider(props: CredentialsContextProvide
                 }
                 })
             );
+            } else {
+                setNewMails(true);
             }
         }
         },
@@ -174,7 +178,7 @@ export default function UserDataContextProvider(props: CredentialsContextProvide
 
 
     return (
-        <UserDataContext.Provider value={{username: data?.getUserData.username, chats, setChats, mailbox, refetchData: refetch, isLoaded, chatID, setChatID, chatName, setChatName, logout, invitSent: data?.getUserData.invitSent, friends}}>
+        <UserDataContext.Provider value={{username: data?.getUserData.username, chats, setChats, newMails, setNewMails, mailbox, refetchData: refetch, isLoaded, chatID, setChatID, chatName, setChatName, logout, invitSent: data?.getUserData.invitSent, friends}}>
             {props.children}
         </UserDataContext.Provider>
     )

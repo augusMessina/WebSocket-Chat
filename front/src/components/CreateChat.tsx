@@ -1,26 +1,42 @@
 import useCreateChat from "@/hooks/useCreateChat";
+import useGetChats from "@/hooks/useGetChats";
 import useSendInvitation from "@/hooks/useSendInvitation";
 import useUserData from "@/hooks/useUserData";
-import { CreateChatForm, DisabledButton, InvitationButton, NavBar, PopupInput, PopupScrollDiv, UserItem } from "@/styles/myStyledComponents";
+import { CreateChatForm, DisabledButton, ErrorMessage, InvitationButton, NavBar, PopupInput, PopupScrollDiv, UserItem } from "@/styles/myStyledComponents";
 import { useState } from "react";
 
 export default function CreateChat () {
 
     const {friends, setFriends} = useUserData()
+    const {allPublicChats} = useGetChats()
     const {createChat} = useCreateChat()
 
     const [pendingInvits, setPendingInvits] = useState<string[]>([])
     const [name, setName] = useState<string>('')
     const [modal, setModal] = useState<string>('PUBLIC');
+    const [showError, setShowError] = useState<boolean>(false);
 
     const handleSwitch = () => {
         setModal(modal === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC');
+        if(modal === 'PRIVATE' && allPublicChats?.some(chat => chat.name.toLocaleLowerCase() === (name.toLocaleLowerCase()))) {
+            setShowError(true);
+        } else {
+            setShowError(false);
+        }
     }
 
     return (
         <CreateChatForm>
             <p>Name of the group chat:</p>
-            <PopupInput style={{margin: 0}} placeholder="Enter new chat name" onChange={(e) => {setName(e.target.value)}}></PopupInput>
+            <PopupInput style={{margin: 0}} placeholder="Enter new chat name" onChange={(e) => {
+                setName(e.target.value);
+                if(modal === 'PUBLIC' && allPublicChats?.some(chat => chat.name.toLocaleLowerCase() === (e.target.value.toLocaleLowerCase()))) {
+                    setShowError(true);
+                } else {
+                    setShowError(false)
+                }
+            }}></PopupInput>
+            { showError && <ErrorMessage>Name already taken</ErrorMessage> }
             <p>Invite friends</p>
             <PopupScrollDiv style={{boxShadow: 'none', border: '1px solid grey', height: '150px'}}>
             {
@@ -82,9 +98,16 @@ export default function CreateChat () {
                     <p style={{margin: 0}}>Private</p>
                     </div>
                     
-                    <InvitationButton onClick={() => {
+                    {
+                        showError ?
+                        <DisabledButton>Create chat</DisabledButton>
+                        :
+                        <InvitationButton onClick={() => {
                         createChat(name, modal, pendingInvits)
-                    }}>Create chat</InvitationButton>
+                        }}>Create chat</InvitationButton>
+                    }
+
+                    
                 </NavBar>
                 </CreateChatForm>
     )

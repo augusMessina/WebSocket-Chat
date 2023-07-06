@@ -1,5 +1,5 @@
 import useRespondMail from "@/hooks/useRespondMail";
-import { LoginButton, LogoutButton, MailItem, PopupScrollDiv, UserButton } from "@/styles/myStyledComponents";
+import { LoginButton, LogoutButton, MailItem, PopupScrollDiv, UnreadMsgs, UserButton } from "@/styles/myStyledComponents";
 import { useContext, useEffect, useState } from "react";
 import Popup from "reactjs-popup";
 import { UserDataContext } from "@/context/UserDataContext";
@@ -7,7 +7,7 @@ import { UserDataContext } from "@/context/UserDataContext";
 export default function Topbar () {
 
 
-    const {username, mailbox, logoutFunction, refetchData} = useContext(UserDataContext);
+    const {username, mailbox, logoutFunction, refetchData, newMails, setNewMails} = useContext(UserDataContext);
 
     const {accept, decline} = useRespondMail(refetchData)
 
@@ -36,10 +36,14 @@ export default function Topbar () {
         <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginRight: '10px'}}>
             <p style={{marginLeft: '225px', marginBottom: 0, marginTop: '0px', fontSize: '40px'}}>{timeText} {username}</p>
             <div style={{marginRight: '225px', display: 'flex', gap: '10px'}}>
-                <Popup arrowStyle={{color: '#1E0D29'}} onOpen={async () => {await refetchData()}} trigger={
+                <Popup arrowStyle={{color: '#1E0D29'}} onOpen={async () => {
+                    await refetchData();
+                    setNewMails(false);
+                }} trigger={
                     <UserButton>
-                        <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <div style={{display: 'flex', justifyContent: 'center', gap: '5px'}}>
                             <i className="gg-mail"></i>
+                            { newMails && <UnreadMsgs style={{width: '7px', height: '7px'}}></UnreadMsgs>}
                         </div>
                     </UserButton>
                 } position={'bottom center'}>

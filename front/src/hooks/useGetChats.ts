@@ -2,6 +2,7 @@ import { JWTContext } from "@/context/JWTContext";
 import { gql, useQuery } from "@apollo/client";
 import { useContext, useState } from "react";
 import useUserData from "./useUserData";
+import { UserDataContext } from "@/context/UserDataContext";
 
 type QueryResponse = {
   getPublicChats: {
@@ -26,7 +27,7 @@ const GET_PUBLIC_CHATS = gql`
 `;
 
 export default function useGetUsers() {
-  const { username } = useUserData();
+  const { username } = useContext(UserDataContext);
   const [searchName, setSearchName] = useState<string>("");
 
   const [publicChats, setPublicChats] = useState<
@@ -40,6 +41,16 @@ export default function useGetUsers() {
     }[]
   >();
 
+  const [allPublicChats, setAllPublicChats] = useState<
+    {
+      id: string;
+      name: string;
+      members: {
+        username: string;
+      }[];
+    }[]
+  >();
+
   const { data, loading, error, refetch } = useQuery<QueryResponse>(
     GET_PUBLIC_CHATS,
     {
@@ -49,11 +60,12 @@ export default function useGetUsers() {
       onCompleted: (data) => {
         setPublicChats(
           data.getPublicChats
-            .filter(
-              (chat) => !chat.members.some((user) => user.username === username)
-            )
+            .filter((chat) => {
+              return !chat.members.some((user) => user.username === username);
+            })
             .map((chat) => ({ ...chat, joined: false }))
         );
+        setAllPublicChats(data.getPublicChats);
       },
       fetchPolicy: "network-only",
     }
@@ -63,6 +75,7 @@ export default function useGetUsers() {
     setSearchName,
     publicChats,
     setPublicChats,
+    allPublicChats,
     loading,
     error,
     refetch,
