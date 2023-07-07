@@ -7,7 +7,7 @@ import ChatsSearch from "./ChatsSearch";
 import useUserData from "@/hooks/useUserData";
 import CreateChat from "./CreateChat";
 
-export default function ChatsPopup () {
+export default function ChatsPopup (props:{close: any}) {
 
     
 
@@ -37,7 +37,7 @@ export default function ChatsPopup () {
                 
                 : 
                 
-                <CreateChat></CreateChat>
+                <CreateChat close={props.close}></CreateChat>
                 
             }
             

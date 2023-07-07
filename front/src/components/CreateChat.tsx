@@ -5,7 +5,7 @@ import useUserData from "@/hooks/useUserData";
 import { CreateChatForm, DisabledButton, ErrorMessage, InvitationButton, NavBar, PopupInput, PopupScrollDiv, UserItem } from "@/styles/myStyledComponents";
 import { useState } from "react";
 
-export default function CreateChat () {
+export default function CreateChat (props: {close: any}) {
 
     const {friends, setFriends} = useUserData()
     const {allPublicChats} = useGetChats()
@@ -102,8 +102,9 @@ export default function CreateChat () {
                         showError ?
                         <DisabledButton>Create chat</DisabledButton>
                         :
-                        <InvitationButton onClick={() => {
-                        createChat(name, modal, pendingInvits)
+                        <InvitationButton onClick={async () => {
+                        await createChat(name, modal, pendingInvits);
+                        props.close();
                         }}>Create chat</InvitationButton>
                     }
 

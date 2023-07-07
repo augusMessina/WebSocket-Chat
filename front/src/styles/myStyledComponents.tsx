@@ -227,7 +227,7 @@ export const UserBubble = styled.p`
     width: fit-content;
     margin: 0;
     padding: 7px;
-    background: #145DA0;
+    background: #8432bb;
     color: white;
     border-radius: 10px;
     font-weight: 600;
@@ -413,6 +413,23 @@ export const ChatItem = styled.div`
     &:hover{
         background: #322c34a7;
     };
+`;
+
+export const ChatTitle = styled.div`
+    align-self: start;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    width: 700px;
+    font-size: 30px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px black;
+    background: #03010463;
+    border-width: 0px;
+    color: white;
 `;
 
 export const NavBar = styled.div`

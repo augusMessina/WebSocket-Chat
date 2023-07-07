@@ -1,6 +1,6 @@
 import useChatData from "@/hooks/useChatData";
 import useSendMessage from "@/hooks/useSendMessage";
-import { ChatBlock, MessageBubble, MessageInput, MessagesDisplay, NewMessage, SendButton, SendMessageDiv, UserBubble } from "@/styles/myStyledComponents";
+import { ChatBlock, ChatItem, ChatTitle, MessageBubble, MessageInput, MessagesDisplay, NewMessage, SendButton, SendMessageDiv, UserBubble } from "@/styles/myStyledComponents";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserDataContext } from "@/context/UserDataContext";
 
@@ -32,18 +32,20 @@ export default function ChatDisplay () {
 
     return (
         <ChatBlock>
-            {chatName}
+            <ChatTitle>{chatName}</ChatTitle>
             <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                 <MessagesDisplay ref={messagesDisplayRef}>
                 {
                     messages?.map(message => {
                         const position = message.user === username ? 'end' : 'start';
                         const time = new Date(message.timestamp);
+                        const hours = time.getHours();
+                        const minutes = (time.getMinutes()<10 ? '0' : '') + time.getMinutes();
                         return (
                         <NewMessage key={message?.id} position={position}>
                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '5px'}}>
                                 {position==='start' && <UserBubble>{message?.user}</UserBubble>}
-                                <p style={{margin: 0}}>{time.getHours()}:{time.getMinutes()}</p>
+                                <p style={{margin: 0}}>{hours}:{minutes}</p>
                             </div>
                             <MessageBubble>{message?.message}</MessageBubble>
                         </NewMessage>

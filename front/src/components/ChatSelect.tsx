@@ -9,10 +9,21 @@ type ChatList = { id: string; name: string; modal: string; unreadMessages: numbe
 
 export default function ChatSelect () {
 
-    const {chats, setChats, chatID, setChatID, setChatName, isLoaded} = useContext(UserDataContext);
+    const handleClose = () => {
+        console.log('modal closed');
+        setIsOpen(false)
+    };
 
-    const [unreadMsgs, setUnreadMsgs] = useState(chats?.map((chat: any) => chat?.unreadMessages))
+    const handleOpen = () => {
+        console.log('modal closed');
+        setIsOpen(true)
+    };
+
+
+    const {chats, setChats, chatID, setChatID, setChatName, isLoaded} = useContext(UserDataContext);
     
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+
     useEffect(() => {
         if(isLoaded && chats && chats.length > 0){
             setChatID(chats[0].id)
@@ -50,8 +61,9 @@ export default function ChatSelect () {
                     }
                 })
             }
-            <Popup trigger={<RoundButton>+</RoundButton>} modal overlayStyle={{background: '#000000a7'}}>
-                <ChatsPopup ></ChatsPopup>
+            <RoundButton onClick={handleOpen}>+</RoundButton>
+            <Popup open={isOpen} modal overlayStyle={{background: '#000000a7'}}>
+                <ChatsPopup close={handleClose} />
             </Popup>
             </ChatsDiv>
         </ChatBlock>
