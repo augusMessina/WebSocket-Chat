@@ -53,6 +53,7 @@ export default class MyDocument extends Document {
           <link href='https://unpkg.com/css.gg@2.0.0/icons/css/more-vertical-alt.css' rel='stylesheet'></link>
           <link href='https://unpkg.com/css.gg@2.0.0/icons/css/user-list.css' rel='stylesheet'></link>
           <link href='https://unpkg.com/css.gg@2.0.0/icons/css/log-in.css' rel='stylesheet'></link>
+          <link href='https://unpkg.com/css.gg@2.0.0/icons/css/user-add.css' rel='stylesheet'></link>
           {/* Add other custom stylesheets and meta tags */}
         </Head>
         <body>

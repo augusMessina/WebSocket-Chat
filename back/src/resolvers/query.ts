@@ -125,7 +125,16 @@ export const Query = {
         .map((user) => ({
           id: user._id.toString(),
           username: user.username,
-        }));
+        }))
+        .sort((a, b) => {
+          if (a.username.toLowerCase() < b.username.toLowerCase()) {
+            return -1;
+          } else if (a.username.toLowerCase() > b.username.toLowerCase()) {
+            return +1;
+          } else {
+            return 0;
+          }
+        });
     } catch (e) {
       throw new Error((e as Error).message);
     }

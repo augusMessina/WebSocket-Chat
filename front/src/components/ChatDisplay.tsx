@@ -45,6 +45,12 @@ export default function ChatDisplay () {
             || invited)
     }
 
+    const checkFriend = (friendId: string) => {
+        console.log(invitSent)
+        return !(invitSent.some((invit: any) => (invit.id_passed === friendId) && (invit?.chatID === chatID)) 
+                || members?.some(member => member.id === friendId))
+    }
+
     const checkDays = (currentDay: number, prevDay: number | undefined) => {
         if(!prevDay){
             return true;
@@ -67,7 +73,9 @@ export default function ChatDisplay () {
                     >
                         <PopupContainer style={{width: '175px', minHeight: '100px', padding: '10px'}}>
                             {
+
                                 (modal !== 'FRIEND_CHAT') ?
+
                                 <>
                                 <Popup 
                                 trigger={
@@ -88,7 +96,6 @@ export default function ChatDisplay () {
                                                     {
                                                         checkMember(member.username, member.id, member.invited) ?
                                                         <InvitationButton style={{width: '250px'}} onClick={async () => {
-                                                            console.log('hey')
                                                             await sendInvitation(member.id, 'FRIEND');
                                                             setMembers(members.map((subMember) => {
                                                                 if(member.id === subMember.id){
@@ -111,6 +118,39 @@ export default function ChatDisplay () {
                                         }
                                     </PopupScrollDiv>
                                 </Popup>
+
+                                <Popup 
+                                trigger={
+                                <UserItem style={{width: '70%', padding: '0px', cursor: 'pointer'}}>
+                                    <p>Invite</p>
+                                    <i className="gg-user-add" style={{color: 'white'}}></i>
+                                </UserItem>
+                                }
+                                position={'left top'}
+                                on={'hover'}
+                                arrow={false}
+                                >
+                                    <PopupScrollDiv style={{width: '450px'}}>
+                                        {
+                                            friends?.map((friend: any) => (
+                                                <UserItem key={friend.id}>
+                                                    {friend.username}
+                                                    {
+                                                        checkFriend(friend.id) ?
+                                                        <InvitationButton style={{width: '250px'}} onClick={async () => {
+                                                            await sendInvitation(friend.id, 'CHAT', chatID);
+                                                        }
+                                                        }>Send Invitation</InvitationButton>
+                        
+                                                        :
+                        
+                                                        <DisabledButton style={{width: '250px'}}>Send Invitation</DisabledButton>
+                                                    }
+                                                </UserItem>
+                                            ))
+                                        }
+                                    </PopupScrollDiv>
+                                </Popup>
                                 
                                 <UserItem style={{width: '70%', padding: '0px', cursor: 'pointer'}} onClick={async () => {
                                     await leaveChat(chatID)
@@ -119,7 +159,9 @@ export default function ChatDisplay () {
                                     <i className="gg-log-in" style={{color: 'white', margin: 0}}></i>
                                 </UserItem>
                                 </>
+
                                 :
+
                                 <UserItem style={{width: '90%', padding: '0px', cursor: 'pointer'}} onClick={async () => {
                                     const friendId = members?.find(member => member.username !== username)?.id;
                                     if(friendId){

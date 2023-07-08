@@ -2,6 +2,7 @@ import { JWTContext } from "@/context/JWTContext";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useContext } from "react";
 import useUserData from "./useUserData";
+import { UserDataContext } from "@/context/UserDataContext";
 
 const SEND_INVITATION = gql`
   mutation Mutation(
@@ -21,7 +22,7 @@ const SEND_INVITATION = gql`
 
 export default function useSendInvitation() {
   const { JWT } = useContext(JWTContext);
-  const { refetchData } = useUserData();
+  const { refetchData, invitSent, setInvitSent } = useContext(UserDataContext);
   const [mutationFuntcion] = useMutation(SEND_INVITATION);
 
   const sendInvitation = async (
@@ -37,7 +38,14 @@ export default function useSendInvitation() {
         chatId,
       },
     });
-    await refetchData();
+
+    const newInvitSent = invitSent;
+    newInvitSent?.push({
+      id_passed: receiverId,
+      modal,
+      chatID: chatId,
+    });
+    // await refetchData();
   };
 
   return {

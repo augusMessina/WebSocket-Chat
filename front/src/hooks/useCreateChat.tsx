@@ -17,7 +17,7 @@ mutation CreateChat($token: String!, $name: String!, $modal: String!) {
 export default function useCreateChat() {
   const { JWT } = useContext(JWTContext);
   const {sendInvitation} = useSendInvitation();
-  const {refetchData} = useUserData()  
+  const {refetchData, invitSent, setInvitSent} = useUserData()  
 
   const [mutationFuntcion] = useMutation<{createChat:{chat:{id: string}}}>(CREATE_CHAT);
 

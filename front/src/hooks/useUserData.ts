@@ -25,6 +25,7 @@ type QueryResponse = {
       {
         id_passed: string;
         modal: string;
+        chatID: string;
       }
     ];
     friendList: [
@@ -66,6 +67,7 @@ const GET_USER_DATA = gql`
       invitSent {
         id_passed
         modal
+        chatID
       }
     }
   }
@@ -110,6 +112,14 @@ export default function useUserData() {
     }[]
   >();
 
+  const [invitSent, setInvitSent] = useState<
+    {
+      id_passed: string;
+      modal: string;
+      chatID: string;
+    }[]
+  >();
+
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const { data, loading, error, refetch } = useQuery<QueryResponse>(
@@ -128,6 +138,7 @@ export default function useUserData() {
           }))
         );
         setMailbox(data.getUserData.mailbox);
+        setInvitSent(data.getUserData.invitSent);
         setIsLoaded(true);
       },
       fetchPolicy: "network-only",
@@ -166,7 +177,8 @@ export default function useUserData() {
   return {
     username: data?.getUserData.username,
     id: data?.getUserData.id,
-    invitSent: data?.getUserData.invitSent,
+    invitSent,
+    setInvitSent,
     chats,
     setChats,
     mailbox,

@@ -12,6 +12,7 @@ export const typeDefs = gql`
     modal: String!
     id_passed: String!
     name: String!
+    chatID: String
   }
 
   type PublicUser {

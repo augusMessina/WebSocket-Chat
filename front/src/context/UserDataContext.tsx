@@ -29,6 +29,7 @@ type QueryResponse = {
         {
           id_passed: string;
           modal: string;
+          chatID: string;
         }
       ];
       friendList: [
@@ -70,6 +71,7 @@ type QueryResponse = {
         invitSent {
           id_passed
           modal
+          chatID
         }
       }
     }
@@ -121,6 +123,14 @@ export default function UserDataContextProvider(props: CredentialsContextProvide
         }[]
     >();
 
+    const [invitSent, setInvitSent] = useState<
+    {
+      id_passed: string;
+      modal: string;
+      chatID: string;
+    }[]
+  >();
+
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     const { data, loading, error, refetch } = useQuery<QueryResponse>(
@@ -139,6 +149,7 @@ export default function UserDataContextProvider(props: CredentialsContextProvide
             }))
             );
             setMailbox(data.getUserData.mailbox);
+            setInvitSent(data.getUserData.invitSent);
             if(data.getUserData.mailbox.length > 0){
                 setNewMails(true);
             }
@@ -195,7 +206,7 @@ export default function UserDataContextProvider(props: CredentialsContextProvide
 
 
     return (
-        <UserDataContext.Provider value={{username: data?.getUserData.username, chats, setChats, newMails, setNewMails, mailbox, refetchData: refetch, isLoaded, chatID, setChatID, chatName, setChatName, logout, invitSent: data?.getUserData.invitSent, friends}}>
+        <UserDataContext.Provider value={{username: data?.getUserData.username, chats, setChats, newMails, setNewMails, mailbox, refetchData: refetch, isLoaded, chatID, setChatID, chatName, setChatName, logout, invitSent, setInvitSent, friends}}>
             {props.children}
         </UserDataContext.Provider>
     )

@@ -104,6 +104,11 @@ export default function CreateChat (props: {close: any}) {
                         :
                         <InvitationButton onClick={async () => {
                         await createChat(name, modal, pendingInvits);
+                        setFriends(friends?.map((friend) => ({
+                                    id: friend.id,
+                                    username: friend.username,
+                                    invited: true,
+                        })))
                         props.close();
                         }}>Create chat</InvitationButton>
                     }

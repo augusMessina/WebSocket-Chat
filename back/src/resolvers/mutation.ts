@@ -435,6 +435,7 @@ export const Mutation = {
                 id_passed: receiver._id.toString(),
                 name: receiver.username,
                 modal: "CHAT",
+                chatID: chat._id.toString(),
               },
             },
           }
