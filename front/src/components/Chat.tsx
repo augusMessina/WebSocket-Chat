@@ -12,12 +12,6 @@ import UserDataContextProvider from "@/context/UserDataContext";
 
 const Chat = () => {
 
-    const {logout} = useUser()
-    const {username, chats, setChats, mailbox, refetchData, isLoaded, invitSent, friends} = useUserData()
-
-    const [chatID, setChatID] = useState<string>('');
-    const [chatName, setChatName] = useState<string>('');
-
     return (
         <>
         <UserDataContextProvider>

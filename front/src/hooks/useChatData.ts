@@ -68,6 +68,14 @@ export default function useChatData(chatId: string) {
 
   const { chats, setChats } = useContext(UserDataContext);
 
+  const [members, setMembers] = useState<
+    {
+      id: string;
+      username: string;
+      invited: boolean;
+    }[]
+  >();
+
   const { data, loading, error, refetch } = useQuery<QueryResponse>(
     GET_CHAT_DATA,
     {
@@ -90,6 +98,13 @@ export default function useChatData(chatId: string) {
               return chat;
             }
           })
+        );
+        setMembers(
+          data.getChatData.members.map((member) => ({
+            id: member.id,
+            username: member.username,
+            invited: false,
+          }))
         );
       },
     }
@@ -122,7 +137,8 @@ export default function useChatData(chatId: string) {
 
   return {
     messages: messageList,
-    members: data?.getChatData.members,
+    members,
+    setMembers,
     modal: data?.getChatData.modal,
     dataRefetch: refetch,
   };

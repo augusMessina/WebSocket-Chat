@@ -78,6 +78,22 @@ export const EyeIconLabel = styled.label<{backgroundColor: string}>`
     transition: 0.2s;
 `;
 
+export const ThreeDotsLabel = styled.label`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px; 
+    width: 40px;
+    cursor: pointer;
+    background: transparent;
+    border-radius: 50%;
+    text-align: center;
+    transition: 0.2s;
+    &:hover{
+        background: #5420746f;
+    }
+`;
+
 export const MessagesDisplay = styled.div`
     display: flex;
     flex-direction: column;
@@ -203,6 +219,7 @@ export const PopupContainer = styled.div`
     align-items: center;
     justify-content: start;
     background: #1e0d29ec;
+    backdrop-filter: blur(30px);
     border-radius: 15px;
 `;
 
@@ -419,7 +436,7 @@ export const ChatTitle = styled.div`
     align-self: start;
     display: flex;
     flex-direction: row;
-    justify-content: start;
+    justify-content: space-between;
     align-items: center;
     gap: 10px;
     padding: 10px;

@@ -140,7 +140,16 @@ export const Query = {
       .filter((user) =>
         user.username.toLowerCase().includes(params.searchName.toLowerCase())
       )
-      .map((user) => ({ id: user._id.toString(), username: user.username }));
+      .map((user) => ({ id: user._id.toString(), username: user.username }))
+      .sort((a, b) => {
+        if (a.username.toLowerCase() < b.username.toLowerCase()) {
+          return -1;
+        } else if (a.username.toLowerCase() > b.username.toLowerCase()) {
+          return +1;
+        } else {
+          return 0;
+        }
+      });
   },
   getChats: async (_: unknown): Promise<Chat[]> => {
     const chats = await chatsCollection.find({}).toArray();
