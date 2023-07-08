@@ -5,12 +5,14 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { UserDataContext } from "@/context/UserDataContext";
 import Popup from "reactjs-popup";
 import useSendInvitation from "@/hooks/useSendInvitation";
+import useLeaveChat from "@/hooks/useLeaveChat";
+import useRemoveFriend from "@/hooks/useRemoveFriend";
 
 export default function ChatDisplay () {
 
     const {chatID, chatName, username, friends, invitSent} = useContext(UserDataContext);
 
-    const {messages, members, setMembers} = useChatData(chatID);
+    const {messages, members, setMembers, modal} = useChatData(chatID);
     const {sendMessage} = useSendMessage()
 
     const [message, setMessage] = useState<string>("")
@@ -18,6 +20,8 @@ export default function ChatDisplay () {
     const messagesDisplayRef = useRef<HTMLDivElement>(null);
 
     const {sendInvitation} = useSendInvitation();
+    const {leaveChat} = useLeaveChat()
+    const {removeFriend} = useRemoveFriend()
 
 
     // cada vez que messageList varíe (se añade un mensaje) hace
@@ -41,6 +45,14 @@ export default function ChatDisplay () {
             || invited)
     }
 
+    const checkDays = (currentDay: number, prevDay: number | undefined) => {
+        if(!prevDay){
+            return true;
+        } else {
+            return currentDay > prevDay;
+        }
+    }
+
     return (
         <ChatBlock>
             <ChatTitle>
@@ -53,52 +65,73 @@ export default function ChatDisplay () {
                     arrowStyle={{color: '#1E0D29'}}
                     nested
                     >
-                        <PopupContainer style={{width: '150px', minHeight: '100px', padding: '10px'}}>
-                            <Popup 
-                            trigger={<UserItem style={{width: '70%', padding: '0px', cursor: 'pointer'}}>
-                                <p>Members</p>
-                                <i className="gg-user-list" style={{color: 'white'}}></i>
-                            </UserItem>}
-                            position={'left top'}
-                            on={'hover'}
-                            arrow={false}
-                            >
-                                <PopupScrollDiv style={{width: '450px'}}>
-                                    {
-                                        members?.map((member) => (
-                                            <UserItem key={member.id}>
-                                                {member.username}
-                                                {
-                                                    checkMember(member.username, member.id, member.invited) ?
-                                                    <InvitationButton style={{width: '250px'}} onClick={async () => {
-                                                        console.log('hey')
-                                                        await sendInvitation(member.id, 'FRIEND');
-                                                        setMembers(members.map((subMember) => {
-                                                            if(member.id === subMember.id){
-                                                                return {
-                                                                    id: subMember.id,
-                                                                    username: subMember.username,
-                                                                    invited: true,
+                        <PopupContainer style={{width: '175px', minHeight: '100px', padding: '10px'}}>
+                            {
+                                (modal !== 'FRIEND_CHAT') ?
+                                <>
+                                <Popup 
+                                trigger={
+                                <UserItem style={{width: '70%', padding: '0px', cursor: 'pointer'}}>
+                                    <p>Members</p>
+                                    <i className="gg-user-list" style={{color: 'white'}}></i>
+                                </UserItem>
+                                }
+                                position={'left top'}
+                                on={'hover'}
+                                arrow={false}
+                                >
+                                    <PopupScrollDiv style={{width: '450px'}}>
+                                        {
+                                            members?.map((member) => (
+                                                <UserItem key={member.id}>
+                                                    {member.username}
+                                                    {
+                                                        checkMember(member.username, member.id, member.invited) ?
+                                                        <InvitationButton style={{width: '250px'}} onClick={async () => {
+                                                            console.log('hey')
+                                                            await sendInvitation(member.id, 'FRIEND');
+                                                            setMembers(members.map((subMember) => {
+                                                                if(member.id === subMember.id){
+                                                                    return {
+                                                                        id: subMember.id,
+                                                                        username: subMember.username,
+                                                                        invited: true,
+                                                                    }
+                                                                } else {
+                                                                    return subMember
                                                                 }
-                                                            } else {
-                                                                return subMember
-                                                            }
-                                                        }))}}>Send Friend Request</InvitationButton>
-                    
-                                                    :
-                    
-                                                    <DisabledButton style={{width: '250px'}}>Send Friend Request</DisabledButton>
-                                                }
-                                            </UserItem>
-                                        ))
+                                                            }))}}>Send Friend Request</InvitationButton>
+                        
+                                                        :
+                        
+                                                        <DisabledButton style={{width: '250px'}}>Send Friend Request</DisabledButton>
+                                                    }
+                                                </UserItem>
+                                            ))
+                                        }
+                                    </PopupScrollDiv>
+                                </Popup>
+                                
+                                <UserItem style={{width: '70%', padding: '0px', cursor: 'pointer'}} onClick={async () => {
+                                    await leaveChat(chatID)
+                                }}>
+                                    <p>Leave</p>
+                                    <i className="gg-log-in" style={{color: 'white', margin: 0}}></i>
+                                </UserItem>
+                                </>
+                                :
+                                <UserItem style={{width: '90%', padding: '0px', cursor: 'pointer'}} onClick={async () => {
+                                    const friendId = members?.find(member => member.username !== username)?.id;
+                                    if(friendId){
+                                        await removeFriend(friendId)
                                     }
-                                </PopupScrollDiv>
-                            </Popup>
+                                        
+                                }}>
+                                    <p>Remove friend</p>
+                                    <i className="gg-log-in" style={{color: 'white', margin: 0}}></i>
+                                </UserItem>
+                            }
                             
-                            <UserItem style={{width: '70%', padding: '0px', cursor: 'pointer'}}>
-                                <p>Leave</p>
-                                <i className="gg-log-in" style={{color: 'white', margin: 0}}></i>
-                            </UserItem>
                         </PopupContainer>
                 </Popup>
                 
@@ -106,19 +139,32 @@ export default function ChatDisplay () {
             <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                 <MessagesDisplay ref={messagesDisplayRef}>
                 {
-                    messages?.map(message => {
+                    messages?.map((message, index) => {
                         const position = message.user === username ? 'end' : 'start';
                         const time = new Date(message.timestamp);
                         const hours = time.getHours();
                         const minutes = (time.getMinutes()<10 ? '0' : '') + time.getMinutes();
+                        const day = time.getDate();
+                        const month = time.getMonth()+1;
+                        const year = time.getFullYear();
+                        const prevTimestamp = messages?.at(index-1)?.timestamp;
+                        let prevDay;
+                        if(prevTimestamp){
+                            prevDay = new Date(prevTimestamp).getDate()
+                        }
                         return (
-                        <NewMessage key={message?.id} position={position}>
-                            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '5px'}}>
-                                {position==='start' && <UserBubble>{message?.user}</UserBubble>}
-                                <p style={{margin: 0}}>{hours}:{minutes}</p>
-                            </div>
-                            <MessageBubble>{message?.message}</MessageBubble>
-                        </NewMessage>
+                            <>
+                            {
+                                checkDays(day, prevDay) && <p style={{alignSelf: 'center'}}>{month}/{day}/{year}</p>
+                            }
+                            <NewMessage key={message?.id} position={position}>
+                                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '5px'}}>
+                                    {position==='start' && <UserBubble>{message?.user}</UserBubble>}
+                                    <p style={{margin: 0}}>{hours}:{minutes}</p>
+                                </div>
+                                <MessageBubble>{message?.message}</MessageBubble>
+                            </NewMessage>
+                            </>
                         )
                     })
                 }
