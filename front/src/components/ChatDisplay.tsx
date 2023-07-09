@@ -1,6 +1,6 @@
 import useChatData from "@/hooks/useChatData";
 import useSendMessage from "@/hooks/useSendMessage";
-import { ChatBlock, ChatItem, ChatTitle, DisabledButton, InvitationButton, MessageBubble, MessageInput, MessagesDisplay, NewMessage, PopupContainer, PopupScrollDiv, SendButton, SendMessageDiv, ThreeDotsLabel, UserBubble, UserItem } from "@/styles/myStyledComponents";
+import { ChatBlock, ChatItem, ChatTitle, DisabledButton, InvitationButton, MessageBubble, MessageInput, MessagesDisplay, NewMessage, PopupContainer, PopupScrollDiv, SendButton, SendMessageForm, ThreeDotsLabel, UserBubble, UserItem } from "@/styles/myStyledComponents";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserDataContext } from "@/context/UserDataContext";
 import Popup from "reactjs-popup";
@@ -31,7 +31,8 @@ export default function ChatDisplay () {
             messagesDisplayRef.current.scrollTop = messagesDisplayRef.current.scrollHeight;
     }, [messages]);
 
-    const handleSendMessage = () => {
+    const handleSendMessage = (e: any) => {
+        e.preventDefault();
         if(message.trim() !== ''){
             sendMessage(message, chatID);
             setMessage("");
@@ -212,17 +213,12 @@ export default function ChatDisplay () {
                 }
                 </MessagesDisplay>
 
-                <SendMessageDiv>
+                <SendMessageForm onSubmit={(e) => handleSendMessage(e)}>
                     <MessageInput value={message} placeholder="Message.." 
                     onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => {
-                        if(e.key === 'Enter'){
-                            handleSendMessage();
-                        }
-                    }}
                     ></MessageInput>
-                    <SendButton onClick={handleSendMessage}>Send</SendButton>
-                </SendMessageDiv>
+                    <SendButton>Send</SendButton>
+                </SendMessageForm>
             </div>
         </ChatBlock>
     )

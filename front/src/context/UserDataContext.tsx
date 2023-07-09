@@ -91,8 +91,8 @@ export const UserDataContext = createContext<any>({})
 export default function UserDataContextProvider(props: CredentialsContextProviderProps) {
     const {logout, JWT} = useUser()
 
-    const [chatID, setChatID] = useState<string>('');
-    const [chatName, setChatName] = useState<string>('');
+    const [chatID, setChatID] = useState<string>('ChatX');
+    const [chatName, setChatName] = useState<string>('ChatX Bot');
 
     const [newMails, setNewMails] = useState<boolean>(false);
 

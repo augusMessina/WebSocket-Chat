@@ -250,7 +250,7 @@ export const UserBubble = styled.p`
     font-weight: 600;
 `;
 
-export const SendMessageDiv = styled.div`
+export const SendMessageForm = styled.form`
     display: flex;
     flex-direction: row;
     justify-content: center;

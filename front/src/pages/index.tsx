@@ -2,6 +2,7 @@ import Chat from '@/components/Chat'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import useUser from '@/hooks/useUser'
+import UserDataContextProvider from '@/context/UserDataContext'
 
 
 export default function Home() {
@@ -31,7 +32,9 @@ export default function Home() {
 
   return (
     <>
+      <UserDataContextProvider>
       <Chat></Chat>
+      </UserDataContextProvider>
     </>
   )
   
