@@ -17,6 +17,7 @@
     "ai": "^2.1.17",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
+    "framer-motion": "^10.12.18",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.13.0",
     "next": "13.4.2",

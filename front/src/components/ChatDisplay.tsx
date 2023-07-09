@@ -7,6 +7,22 @@ import Popup from "reactjs-popup";
 import useSendInvitation from "@/hooks/useSendInvitation";
 import useLeaveChat from "@/hooks/useLeaveChat";
 import useRemoveFriend from "@/hooks/useRemoveFriend";
+import { motion } from "framer-motion";
+
+export const variants = {
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        ease: "easeOut",
+        duration: 0.3
+      }
+    },
+    hide: {
+      y: 20,
+      opacity: 0
+    }
+  };
 
 export default function ChatDisplay () {
 
@@ -61,6 +77,12 @@ export default function ChatDisplay () {
     }
 
     return (
+        <motion.div
+            key={chatID}
+            variants={variants}
+            initial="hide"
+            animate="show"
+        >
         <ChatBlock>
             <ChatTitle>
                 {chatName}
@@ -198,7 +220,7 @@ export default function ChatDisplay () {
                         return (
                             <>
                             {
-                                checkDays(day, prevDay) && <p style={{alignSelf: 'center'}}>{month}/{day}/{year}</p>
+                                (checkDays(day, prevDay) || index===0) && <p style={{alignSelf: 'center'}}>{month}/{day}/{year}</p>
                             }
                             <NewMessage key={message?.id} position={position}>
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '5px'}}>
@@ -221,5 +243,6 @@ export default function ChatDisplay () {
                 </SendMessageForm>
             </div>
         </ChatBlock>
+        </motion.div>
     )
 }

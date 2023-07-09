@@ -8,17 +8,32 @@ import useSendInvitation from "@/hooks/useSendInvitation";
 import useLeaveChat from "@/hooks/useLeaveChat";
 import useRemoveFriend from "@/hooks/useRemoveFriend";
 import { useChat } from 'ai/react'
+import { motion } from "framer-motion";
+
+export const variants = {
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        ease: "easeOut",
+        duration: 0.3
+      }
+    },
+    hide: {
+      y: 20,
+      opacity: 0
+    }
+  };
 
 export default function BotChatDisplay () {
 
-    const {username, chatName} = useContext(UserDataContext);
+    const {username, chatName, chatID} = useContext(UserDataContext);
 
-    const { messages, input, handleInputChange, handleSubmit } = useChat({
+    const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
         api: '/api/chat'
       })
 
     const messagesDisplayRef = useRef<HTMLDivElement>(null);
-
 
 
     // cada vez que messageList varíe (se añade un mensaje) hace
@@ -26,18 +41,15 @@ export default function BotChatDisplay () {
     useEffect(() => {
         if(messagesDisplayRef.current)
             messagesDisplayRef.current.scrollTop = messagesDisplayRef.current.scrollHeight;
-    }, [messages]);
-
-
-    const checkDays = (currentDay: number, prevDay: number | undefined) => {
-        if(!prevDay){
-            return true;
-        } else {
-            return currentDay > prevDay;
-        }
-    }
+    }, [messages, isLoading]);
 
     return (
+        <motion.div
+            key={chatID}
+            variants={variants}
+            initial="hide"
+            animate="show"
+        >
         <ChatBlock>
             <ChatTitle>
                 {chatName}
@@ -64,6 +76,7 @@ export default function BotChatDisplay () {
                             )
                         })
                     }
+                    { isLoading && messages[messages.length-1].role === 'user' && <span className="writing-loader"></span> }
                 </MessagesDisplay>
 
                 <SendMessageForm onSubmit={handleSubmit}>
@@ -74,5 +87,6 @@ export default function BotChatDisplay () {
                 </SendMessageForm>
             </div>
         </ChatBlock>
+        </motion.div>
     )
 }
