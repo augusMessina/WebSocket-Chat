@@ -1,6 +1,6 @@
 import useChatData from "@/hooks/useChatData";
 import useSendMessage from "@/hooks/useSendMessage";
-import { ChatBlock, ChatItem, ChatTitle, DisabledButton, InvitationButton, MessageBubble, MessageInput, MessagesDisplay, NewMessage, PopupContainer, PopupScrollDiv, SendButton, SendMessageForm, ThreeDotsLabel, UserBubble, UserItem } from "@/styles/myStyledComponents";
+import { ChatBlock, ChatItem, ChatTitle, DisabledButton, DisplayBlock, InvitationButton, MessageBubble, MessageInput, MessagesDisplay, NewMessage, PopupContainer, PopupScrollDiv, SendButton, SendMessageForm, ThreeDotsLabel, UserBubble, UserItem } from "@/styles/myStyledComponents";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserDataContext } from "@/context/UserDataContext";
 import Popup from "reactjs-popup";
@@ -50,7 +50,7 @@ export default function BotChatDisplay () {
             initial="hide"
             animate="show"
         >
-        <ChatBlock>
+        <DisplayBlock>
             <ChatTitle>
                 {chatName}
             </ChatTitle>
@@ -86,7 +86,7 @@ export default function BotChatDisplay () {
                     <SendButton type="submit">Send</SendButton>
                 </SendMessageForm>
             </div>
-        </ChatBlock>
+        </DisplayBlock>
         </motion.div>
     )
 }

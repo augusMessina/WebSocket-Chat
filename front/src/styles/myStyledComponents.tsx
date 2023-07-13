@@ -19,7 +19,18 @@ export const UnreadMsgs = styled.div`
     text-align: center;
 `;
 
-export const Wrapper = styled.div`
+export const PageWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    height: 100%;
+    max-width: 1500px;
+    gap: 20px;
+`;
+
+export const BlocksWrapper = styled.div`
     display: flex;
     height: 100%;
     width: 100%;
@@ -53,12 +64,33 @@ export const ChatBlock = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     background: #00000031;
     backdrop-filter: blur(15px);
     padding: 30px;
     border-radius: 15px;
     color: white;
+
+    @media (max-width: 1000px) {
+        display: none;
+    }
+`;
+
+export const DisplayBlock = styled.div`
+    margin-bottom: 100px;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #00000031;
+    backdrop-filter: blur(15px);
+    padding: 30px;
+    border-radius: 15px;
+    color: white;
+    max-width: 700px;
 `;
 
 export const FormFlex = styled.form`
@@ -94,13 +126,34 @@ export const ThreeDotsLabel = styled.label`
     }
 `;
 
+export const ThreeLinesLabel = styled.label`
+    display: none;
+    align-items: center;
+    justify-content: center;
+    height: 40px; 
+    width: 40px;
+    cursor: pointer;
+    background: transparent;
+    border-radius: 50%;
+    text-align: center;
+    transition: 0.2s;
+    &:hover{
+        background: #5420746f;
+    }
+
+    @media (max-width: 1000px) {
+        display: flex;
+    }
+`;
+
 export const MessagesDisplay = styled.div`
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
     height: 600px;
-    width: 700px;
+    /* max-width: 700px; */
+    width: 100%;
     box-shadow: 1px 1px 10px black;
     border-radius: 15px;
     padding: 10px;
@@ -126,6 +179,11 @@ export const MessagesDisplay = styled.div`
     &::-webkit-scrollbar-thumb:hover {
         background: #7d7d7d4b;
     } 
+
+
+    /* @media (min-width: 1400px) {
+        width: 700px;
+    } */
 
 `;
 
@@ -175,7 +233,7 @@ export const PopupScrollDiv = styled.div`
     overflow-y: auto;
     overflow-x: hidden;
     height: 300px;
-    width: 500px;
+    width: 100%;
     border-radius: 15px;
     padding: 0px;
     gap: 10px;
@@ -212,7 +270,7 @@ export const PopupScrollDiv = styled.div`
 `;
 
 export const PopupContainer = styled.div`
-    width: 600px;
+    max-width: 600px;
     min-height: 479px;
     display: flex;
     flex-direction: column;
@@ -228,6 +286,7 @@ export const NewMessage = styled.div<{position: string}>`
     flex-direction: column;
     align-items: ${props => props.position};
     gap: 1px;
+    width: 100%;
 `;
 
 export const MessageBubble = styled.p`
@@ -311,7 +370,7 @@ export const LoginButton = styled.button`
 `;
 
 export const InvitationButton = styled.button`
-    width: 300px;
+    max-width: 300px;
     border-radius: 10px;
     background: #8432bb;
     color: white;
@@ -321,7 +380,7 @@ export const InvitationButton = styled.button`
 `;
 
 export const DisabledButton = styled.button`
-    width: 300px;
+    max-width: 300px;
     border-radius: 10px;
     background: #1818189b;
     color: white;
@@ -420,7 +479,7 @@ export const ChatItem = styled.div`
     align-items: center;
     gap: 10px;
     padding: 10px;
-    width: 175px;
+    width: 100%;
     border-radius: 10px;
     background: #03010463;
     border-width: 0px;
@@ -433,14 +492,13 @@ export const ChatItem = styled.div`
 `;
 
 export const ChatTitle = styled.div`
-    align-self: start;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
     padding: 10px;
-    width: 700px;
+    width: 100%;
     font-size: 30px;
     border-radius: 10px;
     box-shadow: 1px 1px 5px black;

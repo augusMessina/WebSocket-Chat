@@ -1,6 +1,6 @@
 import useUser from "@/hooks/useUser";
 import useUserData from "@/hooks/useUserData";
-import { ChatBlock, ErrorMessage, LogoutButton, UserButton, Menu, MenuCentered, MessageBubble, MessageInput, MessagesDisplay, NewMessage, SendButton, UserBubble, Wrapper, MailItem, LoginButton } from "@/styles/myStyledComponents";
+import { ChatBlock, ErrorMessage, LogoutButton, UserButton, Menu, MenuCentered, MessageBubble, MessageInput, MessagesDisplay, NewMessage, SendButton, UserBubble, MailItem, LoginButton, BlocksWrapper, PageWrapper } from "@/styles/myStyledComponents";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import ChatSelect from "./ChatSelect";
@@ -17,16 +17,18 @@ const Chat = () => {
 
     return (
         <>
-        <Topbar></Topbar>
-        <Wrapper>
-        <ChatSelect/>
-        {
-            chatID === 'ChatX' ?
-            <BotChatDisplay></BotChatDisplay>
-            :
-            <ChatDisplay></ChatDisplay>
-        }
-        </Wrapper>
+        <PageWrapper>
+            <Topbar></Topbar>
+            <BlocksWrapper>
+            <ChatSelect/>
+            {
+                chatID === 'ChatX' ?
+                <BotChatDisplay></BotChatDisplay>
+                :
+                <ChatDisplay></ChatDisplay>
+            }
+            </BlocksWrapper>
+        </PageWrapper>
         </>
     );
 };

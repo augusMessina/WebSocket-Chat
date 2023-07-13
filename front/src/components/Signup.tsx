@@ -1,5 +1,5 @@
 import useUser from "@/hooks/useUser";
-import { ErrorMessage, EyeIconLabel, LoginButton, LoginInput, MenuCentered, Title, FormFlex, Wrapper } from "@/styles/myStyledComponents"
+import { ErrorMessage, EyeIconLabel, LoginButton, LoginInput, MenuCentered, Title, FormFlex, BlocksWrapper } from "@/styles/myStyledComponents"
 import { gql, useMutation } from "@apollo/client";
 import Link from "next/link"
 import { createContext, useState } from "react"
@@ -18,14 +18,14 @@ export default function Signup () {
 
     return (
         <>
-        <Wrapper>
+        <BlocksWrapper>
             <MenuCentered>
                 <Title>Create your <br></br> ChatX account</Title>
                 <MutationContextProvider MUTATION={REGISTER_MUTATION} pageType="SIGNUP">
                     <UserForm></UserForm>
                 </MutationContextProvider>
             </MenuCentered>
-        </Wrapper>
+        </BlocksWrapper>
         </>
     )
 }

@@ -1,5 +1,5 @@
 import useUser from "@/hooks/useUser";
-import { ErrorMessage, EyeIconLabel, LoginButton, LoginInput, MenuCentered, Title, FormFlex, Wrapper } from "@/styles/myStyledComponents"
+import { ErrorMessage, EyeIconLabel, LoginButton, LoginInput, MenuCentered, Title, FormFlex, BlocksWrapper } from "@/styles/myStyledComponents"
 import { gql, useMutation } from "@apollo/client";
 import Link from "next/link"
 import { createContext, useState } from "react"
@@ -18,7 +18,7 @@ export default function Login () {
 
     return (
         <>
-        <Wrapper>
+        <BlocksWrapper>
             <MenuCentered>
                 <Title>Welcome to ChatX</Title>
                 <MutationContextProvider MUTATION={LOGIN_MUTATION} pageType={'LOGIN'}>
@@ -30,7 +30,7 @@ export default function Login () {
                 </div>
                 
             </MenuCentered>
-        </Wrapper>
+        </BlocksWrapper>
         </>
     )
 }

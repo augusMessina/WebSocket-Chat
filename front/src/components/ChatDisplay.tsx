@@ -1,6 +1,6 @@
 import useChatData from "@/hooks/useChatData";
 import useSendMessage from "@/hooks/useSendMessage";
-import { ChatBlock, ChatItem, ChatTitle, DisabledButton, InvitationButton, MessageBubble, MessageInput, MessagesDisplay, NewMessage, PopupContainer, PopupScrollDiv, SendButton, SendMessageForm, ThreeDotsLabel, UserBubble, UserItem } from "@/styles/myStyledComponents";
+import { ChatBlock, ChatItem, ChatTitle, DisabledButton, DisplayBlock, InvitationButton, MessageBubble, MessageInput, MessagesDisplay, NewMessage, PopupContainer, PopupScrollDiv, SendButton, SendMessageForm, ThreeDotsLabel, ThreeLinesLabel, UserBubble, UserItem } from "@/styles/myStyledComponents";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserDataContext } from "@/context/UserDataContext";
 import Popup from "reactjs-popup";
@@ -83,9 +83,16 @@ export default function ChatDisplay () {
             initial="hide"
             animate="show"
         >
-        <ChatBlock>
+        <DisplayBlock>
             <ChatTitle>
-                {chatName}
+                <div style={{display: 'flex', alignItems: 'center', fontSize: '30px', gap: '10px'}}>
+                    <ThreeLinesLabel>
+                        <i className="gg-menu"></i>
+                    </ThreeLinesLabel>
+                    {chatName}
+                </div>
+                
+                
                 <Popup 
                     trigger={<ThreeDotsLabel>
                         <i className="gg-more-vertical-alt"></i>
@@ -111,14 +118,14 @@ export default function ChatDisplay () {
                                 on={'hover'}
                                 arrow={false}
                                 >
-                                    <PopupScrollDiv style={{width: '450px'}}>
+                                    <PopupScrollDiv style={{maxWidth: '450px'}}>
                                         {
                                             members?.map((member) => (
                                                 <UserItem key={member.id}>
                                                     {member.username}
                                                     {
                                                         checkMember(member.username, member.id, member.invited) ?
-                                                        <InvitationButton style={{width: '250px'}} onClick={async () => {
+                                                        <InvitationButton style={{maxWidth: '250px'}} onClick={async () => {
                                                             await sendInvitation(member.id, 'FRIEND');
                                                             setMembers(members.map((subMember) => {
                                                                 if(member.id === subMember.id){
@@ -134,7 +141,7 @@ export default function ChatDisplay () {
                         
                                                         :
                         
-                                                        <DisabledButton style={{width: '250px'}}>Send Friend Request</DisabledButton>
+                                                        <DisabledButton style={{maxWidth: '250px'}}>Send Friend Request</DisabledButton>
                                                     }
                                                 </UserItem>
                                             ))
@@ -153,21 +160,21 @@ export default function ChatDisplay () {
                                 on={'hover'}
                                 arrow={false}
                                 >
-                                    <PopupScrollDiv style={{width: '450px'}}>
+                                    <PopupScrollDiv style={{maxWidth: '450px'}}>
                                         {
                                             friends?.map((friend: any) => (
                                                 <UserItem key={friend.id}>
                                                     {friend.username}
                                                     {
                                                         checkFriend(friend.id) ?
-                                                        <InvitationButton style={{width: '250px'}} onClick={async () => {
+                                                        <InvitationButton style={{maxWidth: '250px'}} onClick={async () => {
                                                             await sendInvitation(friend.id, 'CHAT', chatID);
                                                         }
                                                         }>Send Invitation</InvitationButton>
                         
                                                         :
                         
-                                                        <DisabledButton style={{width: '250px'}}>Send Invitation</DisabledButton>
+                                                        <DisabledButton style={{maxWidth: '250px'}}>Send Invitation</DisabledButton>
                                                     }
                                                 </UserItem>
                                             ))
@@ -201,7 +208,7 @@ export default function ChatDisplay () {
                 </Popup>
                 
             </ChatTitle>
-            <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
+            <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px', width: '100%'}}>
                 <MessagesDisplay ref={messagesDisplayRef}>
                 {
                     messages?.map((message, index) => {
@@ -242,7 +249,7 @@ export default function ChatDisplay () {
                     <SendButton>Send</SendButton>
                 </SendMessageForm>
             </div>
-        </ChatBlock>
+        </DisplayBlock>
         </motion.div>
     )
 }

@@ -33,9 +33,9 @@ export default function Topbar () {
     }
 
     return (
-        <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginRight: '10px'}}>
-            <p style={{marginLeft: '225px', marginBottom: 0, marginTop: '0px', fontSize: '40px'}}>{timeText} {username}</p>
-            <div style={{marginRight: '225px', display: 'flex', gap: '10px'}}>
+        <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: '20px',}}>
+            <p style={{marginBottom: 0, marginTop: '0px', fontSize: '40px'}}>{timeText} {username}</p>
+            <div style={{display: 'flex', gap: '10px'}}>
                 <Popup arrowStyle={{color: '#1E0D29'}} onOpen={async () => {
                     await refetchData();
                     setNewMails(false);

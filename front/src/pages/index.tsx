@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import useUser from '@/hooks/useUser'
 import UserDataContextProvider from '@/context/UserDataContext'
 import { motion } from 'framer-motion'
-import { Wrapper } from '@/styles/myStyledComponents'
+import { BlocksWrapper, PageWrapper } from '@/styles/myStyledComponents'
 
 
 export default function Home() {
@@ -28,9 +28,9 @@ export default function Home() {
 
   if(pageLoadnig){
     return (
-      <Wrapper>
+      <BlocksWrapper>
         <div style={{alignSelf: 'center'}} className="big-custom-loader"></div>
-      </Wrapper>
+      </BlocksWrapper>
     )
   }
 
@@ -42,6 +42,7 @@ export default function Home() {
           animate={{opacity: 1, y: 0}}
           exit={{opacity: 0, y: 15}}
           transition={{delay: 0.25}}
+          style={{width: '100%', display: 'flex', justifyContent: 'center'}}
         >
           <Chat></Chat>
         </motion.div>
